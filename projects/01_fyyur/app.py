@@ -5,6 +5,7 @@
 import json
 import dateutil.parser
 import babel
+import re
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -152,9 +153,11 @@ def search_venues():
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-  # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
+  # Shows the venue page with the given venue_id
   data = Venue.query.get(venue_id)
+  # Split into multiple discrete genres using a delimiter
+  genres_concatenated = data.genres
+  data.genres = re.split(',', genres_concatenated)
   return render_template('pages/show_venue.html', venue=data)
 
 #  Create Venue
@@ -212,6 +215,9 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   data = Artist.query.get(artist_id)
+  # Split into multiple discrete genres using a delimiter
+  genres_concatenated = data.genres
+  data.genres = re.split(',', genres_concatenated)
   return render_template('pages/show_artist.html', artist=data)
 
 #  Update
