@@ -35,10 +35,18 @@ migrate = Migrate(app, db)
 # Models.
 #----------------------------------------------------------------------------#
 
-show_components = db.Table('show_components', 
-    db.Column('artist_id', db.Integer, db.ForeignKey('artist.id'), primary_key = True),
-    db.Column('venue_id', db.Integer, db.ForeignKey('venue.id', primary_key = True))
-)
+# Implement association table between artists and venues
+# show_components = db.Table('show_components', 
+#     db.Column('artist_id', db.Integer, db.ForeignKey('artist.id'), primary_key = True),
+#     db.Column('venue_id', db.Integer, db.ForeignKey('venue.id', primary_key = True))
+# )
+
+class Area(db.Model):
+  __tablename__ = 'Area'
+  id = db.Column(db.Integer, primary_key = True)
+  city = db.Column(db.String(500), nullable = False)
+  state = db.Column(db.String(500), nullable = False)
+  venues = db.relationship('Venue', backref = 'Area', lazy = True)
 
 class Venue(db.Model):
     __tablename__ = 'Venue'
@@ -54,6 +62,7 @@ class Venue(db.Model):
     website = db.Column(db.String(500))
     seeking_talent = db.Column(db.Boolean, default = True)
     seeking_description = db.Column(db.String(250))
+    area_id = db.Column(db.Integer, db.ForeignKey('Area.id'))
     # TODO Add upcoming_shows with artist_id, artist_name, artist_image_link, start_time
     # TODO Add upcoming_shows_count
     # TODO Add past_shows with artist_id, artist_name, artist_image_link, start_time
