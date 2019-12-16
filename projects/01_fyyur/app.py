@@ -6,7 +6,7 @@ import json
 import dateutil.parser
 import babel
 import re
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -326,10 +326,49 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  # called upon submitting the new artist listing form
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
+  # Called upon submitting the new artist listing form
+  # TODO: Insert form data as a new Venue record in the db
+       # Example of Format: 
+          # artist={
+          #   "id": 4,
+          #   "name": "Guns N Petals",
+          #   "genres": ["Rock n Roll"],
+          #   "city": "San Francisco",
+          #   "state": "CA",
+          #   "phone": "326-123-5000",
+          #   "website": "https://www.gunsnpetalsband.com",
+          #   "facebook_link": "https://www.facebook.com/GunsNPetals",
+          #   "seeking_venue": True,
+          #   "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+          #   "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
+          # }
+    
+  error = False
+  body = {}
+  try: 
+    new_artist_name = request.get_json['name']
+    new_artist_city = request.get_json['city']
+    new_artist_state = request.get_json['state']
+    new_artist_phone = request.get_json['phone']
+    new_artist_genres = request.get_json['genres']
+    new_artist_facebook_link = request.get_json['facebook_link']
+    new_artist = Artist(name = new_artist_name, city = new_artist_city, state = new_artist_state, genres = new_artist_genres, facebook_link = new_artist_facebook_link)
+    # Add new artist record to db
+    db.session.add(new_artist)
+    db.session.commit()
+    body['name'] = new_artist.name
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  if error:
+    abort(400)
+  else:
+    return jsonify(body)
 
+  # TODO: Modify data to be the data object returned from db insertion
   # on successful db insert, flash success
   flash('Artist ' + request.form['name'] + ' was successfully listed!')
   # TODO: on unsuccessful db insert, flash an error instead.
