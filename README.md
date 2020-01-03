@@ -1,1 +1,1 @@
-This is Jack Stewart's submissions for Udacity's Full-Stack Nanodegree program.
+This is Jack Stewart's set of submissions for Udacity's Full-Stack Nanodegree program.
