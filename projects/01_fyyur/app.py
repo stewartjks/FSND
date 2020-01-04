@@ -107,13 +107,14 @@ class Show(db.Model):
   __tablename__ = 'Show'
   id = db.Column(db.Integer, primary_key = True)
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable = False)
+  venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable = False)
+  start_time = db.Column(db.String(500), nullable = False)
+
   # TODO Try out alternative approach to loading `artist_name`
   artist_name = db.Column(db.String, nullable = True)
   artist_image_link = db.Column(db.String, nullable = True)
-  venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable = False)
   venue_name = db.Column(db.String(500), nullable = False)
   venue_image_link = db.Column(db.String(500), nullable = True)
-  start_time = db.Column(db.String(500), nullable = False)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -378,38 +379,22 @@ def create_artist_submission():
 
 #  Shows
 #  ----------------------------------------------------------------
-
+# Displays list of shows at /shows
 @app.route('/shows')
 def shows():
-  # displays list of shows at /shows
-  data = Show.query.all()
+  data = db.session.query(Show).join(Artist).join(Venue).all()
+  # TODO modify query to join venue fields by id
   return render_template('pages/shows.html', shows=data)
-
-  # data=[{
-  #   "venue_id": 1,
-  #   "venue_name": "The Musical Hop",
-  #   "artist_id": 4,
-  #   "artist_name": "Guns N Petals",
-  #   "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-  #   "start_time": "2019-05-21T21:30:00.000Z"
-  # }, {
-  #   "venue_id": 3,
-  #   "venue_name": "Park Square Live Music & Coffee",
-  #   "artist_id": 5,
-  #   "artist_name": "Matt Quevedo",
-  #   "artist_image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
-  #   "start_time": "2019-06-15T23:00:00.000Z"
-  # }]
 
 @app.route('/shows/create')
 def create_shows():
-  # renders form. do not touch.
+  # Renders form. Do not touch.
   form = ShowForm()
   return render_template('forms/new_show.html', form=form)
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-  # called to create new shows in the db, upon submitting new show listing form
+  # Called to create new shows in the db, upon submitting new show listing form
   # TODO: insert form data as a new Show record in the db, instead
 
   # on successful db insert, flash success
