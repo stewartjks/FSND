@@ -24,6 +24,7 @@ import datetime
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
+app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
 # Connect to local postgresql database
@@ -65,14 +66,13 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean, default = True)
     seeking_description = db.Column(db.String(250))
     area_id = db.Column(db.Integer, db.ForeignKey('Area.id'))
+    shows = db.relationship('Show', secondary = show_components, backref = db.backref('Venue', lazy = True))
 
     # TODO Add upcoming_shows with artist_id, artist_name, artist_image_link, start_time
     # TODO Add upcoming_shows_count
     # TODO Add past_shows with artist_id, artist_name, artist_image_link, start_time
     # TODO Add count of past_shows
     
-    # TODO Figure out how to trigger migration to add
-    shows = db.relationship('Show', secondary = show_components, backref = db.backref('Venue', lazy = True))
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -86,6 +86,7 @@ class Artist(db.Model):
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(500))
     seeking_venues = db.Column(db.Boolean, default = True)
+    shows = db.relationship('Show', backref = 'Artist', lazy=True)
     
     # TODO Add upcoming_shows list with each list entry containing:
       # show.venue_image_link,
@@ -99,9 +100,6 @@ class Artist(db.Model):
       # show.venue_name,
       # show.start_time
     # TODO Add num_past_shows
-    
-    # TODO Figure out if this should this be a many-to-many relationship instead
-    shows = db.relationship('Show', backref = 'Artist', lazy=True)
 
 class Show(db.Model):
   __tablename__ = 'Show'
@@ -109,12 +107,6 @@ class Show(db.Model):
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable = False)
   venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable = False)
   start_time = db.Column(db.String(500), nullable = False)
-
-  # TODO Try out alternative approach to loading `artist_name`
-  artist_name = db.Column(db.String, nullable = True)
-  artist_image_link = db.Column(db.String, nullable = True)
-  venue_name = db.Column(db.String(500), nullable = False)
-  venue_image_link = db.Column(db.String(500), nullable = True)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -357,7 +349,13 @@ def create_artist_submission():
     # Add new artist record to db
     db.session.add(new_artist)
     db.session.commit()
+    # Return response object
     body['name'] = new_artist.name
+    body['city'] = new_artist.city
+    body['state'] = new_artist.state
+    body['phone'] = new_artist.phone
+    body['genres'] = new_artist.genres
+    body['facebook_link'] = new_artist.facebook_link
   except:
     error = True
     db.session.rollback()
@@ -382,8 +380,7 @@ def create_artist_submission():
 # Displays list of shows at /shows
 @app.route('/shows')
 def shows():
-  data = db.session.query(Show).join(Artist).join(Venue).all()
-  # TODO modify query to join venue fields by id
+  data = db.session.query(Artist).join(Artist.shows).all()
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
