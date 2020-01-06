@@ -344,7 +344,7 @@ def create_artist_submission():
     new_artist_state = request.get_json['state']
     new_artist_phone = request.get_json['phone']
     new_artist_genres = request.get_json['genres']
-    new_artist_facebook_link = request.get_json['facebook_link']
+    new_artist_facebook_link = request.get_json['facebook-link']
     new_artist = Artist(name = new_artist_name, city = new_artist_city, state = new_artist_state, genres = new_artist_genres, facebook_link = new_artist_facebook_link)
     # Add new artist record to db
     db.session.add(new_artist)
