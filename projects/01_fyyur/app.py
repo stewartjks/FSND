@@ -6,7 +6,7 @@ import json
 import dateutil.parser
 import babel
 import re
-from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort
+from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort, jsonify
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -339,13 +339,15 @@ def create_artist_submission():
   error = False
   body = {}
   try:
-    new_artist_name = request.get_json['name']
-    new_artist_city = request.get_json['city']
-    new_artist_state = request.get_json['state']
-    new_artist_phone = request.get_json['phone']
-    new_artist_genres = request.get_json['genres']
-    new_artist_facebook_link = request.get_json['facebook-link']
+    print('Hello World')
+    new_artist_name = request.get_json()['name']
+    new_artist_city = request.get_json()['city']
+    new_artist_state = request.get_json()['state']
+    new_artist_phone = request.get_json()['phone']
+    new_artist_genres = request.get_json()['genres']
+    new_artist_facebook_link = request.get_json()['facebook-link']
     new_artist = Artist(name = new_artist_name, city = new_artist_city, state = new_artist_state, genres = new_artist_genres, facebook_link = new_artist_facebook_link)
+    print(new_artist)
     # Add new artist record to db
     db.session.add(new_artist)
     db.session.commit()
