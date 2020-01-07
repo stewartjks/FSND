@@ -8,14 +8,16 @@ function getMultiselectValues(multiselectElement) {
   var result = [];
   var options = multiselectElement && multiselectElement.options;
   var option;
-
   for (var i=0, iLen=options.length; i<iLen; i++){
     option = options[i];
-
     if (option.selected){
       result.push(option.value || option.text);
     }
   }
+  result.map(function(selection) {
+    return JSON.stringify(selection);
+  });
+  result = result.join(", ");
   return result;
 }
 

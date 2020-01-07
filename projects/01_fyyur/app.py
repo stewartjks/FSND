@@ -77,7 +77,7 @@ class Venue(db.Model):
 class Artist(db.Model):
     __tablename__ = 'Artist'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable = False)
+    name = db.Column(db.String, nullable=False)
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
@@ -105,6 +105,7 @@ class Show(db.Model):
   __tablename__ = 'Show'
   id = db.Column(db.Integer, primary_key = True)
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable = False)
+  artist = db.relationship('Artist', backref = 'Show', lazy=True)
   venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable = False)
   start_time = db.Column(db.String(500), nullable = False)
 
@@ -320,7 +321,7 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   # Called upon submitting the new artist listing form
-  # TODO: Insert form data as a new Venue record in the db
+  # TODO: Insert form data as a new Artist record in the db
        # Example of Format: 
           # artist={
           #   "id": 4,
@@ -335,10 +336,9 @@ def create_artist_submission():
           #   "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
           #   "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
           # }
-    
   error = False
   body = {}
-  try: 
+  try:
     new_artist_name = request.get_json['name']
     new_artist_city = request.get_json['city']
     new_artist_state = request.get_json['state']
@@ -380,7 +380,21 @@ def create_artist_submission():
 # Displays list of shows at /shows
 @app.route('/shows')
 def shows():
-  data = db.session.query(Artist).join(Artist.shows).all()
+  shows = Show.query.all()
+  data = []
+  for show in shows:
+    venue = db.session.query(Venue).filter_by(id=show.venue_id).first()
+    artist = db.session.query(Artist).filter_by(id=show.artist_id).first()
+    data.append(
+      {
+        "venue_id": show.venue_id,
+        "venue_name": venue.name,
+        "artist_id": show.artist_id,
+        "artist_name": artist.name,
+        "artist_image_link": artist.image_link,
+        "start_time": show.start_time
+      }
+    )
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
