@@ -40,3 +40,35 @@
     </form>
   </div>
 {% endblock %}
+
+<script>
+  // On form submit, create request for new venue and handle response
+  document.getElementById('create-venue-form').onsubmit = function (e) {
+    // Prevent default client redirect
+      e.preventDefault();
+    // Create POST with 'description' key-value pair in request body
+      fetch('/venues/create', {
+          method: 'POST',
+          body: JSON.stringify({
+              'name': document.getElementById('name').value,
+              'city': document.getElementById('city').value,
+              'state': document.getElementById('state').value,
+              'address': document.getElementById('address').value,
+              'phone': document.getElementById('phone').value,
+              'genres': document.getElementById('genres').value,
+              'facebook_link': document.getElementById('facebook_link').value
+          }),
+          headers: {
+              'content-type': 'application/json'
+          }
+    // Convert response from string to JSON
+      }).then(function(response) {
+          return response.json();
+      }).then(function(jsonResponse){
+          // TODO flash success message
+      }).catch(function () {
+          // Show (hidden by default) error message if AJAX request fails at any point
+          return document.getElementById('error').classList.remove('hidden');
+      });
+  };
+  </script>
