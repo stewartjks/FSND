@@ -44,6 +44,7 @@ show_components = db.Table('show_components',
     db.Column('show_id', db.Integer, db.ForeignKey('Show.id'), primary_key = True)
 )
 
+# TODO Remove unnecessary Area model
 class Area(db.Model):
   __tablename__ = 'Area'
   id = db.Column(db.Integer, primary_key = True)
@@ -67,13 +68,7 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(250))
     area_id = db.Column(db.Integer, db.ForeignKey('Area.id'))
     shows = db.relationship('Show', secondary = show_components, backref = db.backref('Venue', lazy = True))
-
-    # TODO Add upcoming_shows with artist_id, artist_name, artist_image_link, start_time
-    # TODO Add upcoming_shows_count
-    # TODO Add past_shows with artist_id, artist_name, artist_image_link, start_time
-    # TODO Add count of past_shows
-    
-
+  
 class Artist(db.Model):
     __tablename__ = 'Artist'
     id = db.Column(db.Integer, primary_key=True)
@@ -87,19 +82,6 @@ class Artist(db.Model):
     website = db.Column(db.String(500))
     seeking_venues = db.Column(db.Boolean, default = True)
     shows = db.relationship('Show', backref = 'Artist', lazy=True)
-    
-    # TODO Add upcoming_shows list with each list entry containing:
-      # show.venue_image_link,
-      # show.venue_id,
-      # show.venue_name,
-      # show.start_time
-    # TODO Add num_upcoming_shows
-    # TODO Add past_shows list with each entry containing:
-      # show.venue_image_link,
-      # show.venue_id,
-      # show.venue_name,
-      # show.start_time
-    # TODO Add num_past_shows
 
 class Show(db.Model):
   __tablename__ = 'Show'
@@ -138,8 +120,38 @@ def index():
 @app.route('/venues')
 def venues():
   # TODO num_shows should be aggregated based on number of upcoming shows per venue.
-  data = Area.query.order_by('id').all()
+  data = []
+  venues = db.session.query(Venue).all()
+  for venue in venues:
+    current_venue = Venue.query.get(venue.id)
+    city = current_venue.city
+    state = current_venue.state
+    venues = Venue.query.filter_by(city=city).all()
+    # TODO define number of upcoming shows, including addtl filter to limit to shows in the future
+    # num_upcoming_shows = db.session.query(Shows).filter_by(city=city).count()
+    data.append(
+      {
+        "city": city,
+        "state": state,
+        "venues": venues
+      }
+    )
   return render_template('pages/venues.html', areas = data)
+
+# @app.route('/shows')
+# def shows():
+#   shows = Show.query.all()
+#   data = []
+#   for show in shows:
+#     venue = db.session.query(Venue).filter_by(id=show.venue_id).first()
+#     artist = db.session.query(Artist).filter_by(id=show.artist_id).first()
+#     data.append(
+#       {
+#         "venue_id": show.venue_id,
+#         "venue_name": venue.name
+#       }
+#     )
+#   return render_template('pages/shows.html', shows=data)
 
 # data=[{
   #   "city": "San Francisco",
