@@ -20,3 +20,113 @@ function getMultiselectValues(multiselectElement) {
   result = result.join(", ");
   return result;
 }
+
+// On form submit, create request for new show and handle response
+function showFormSubmitHandler() {
+  document.getElementById('create-show-form').onsubmit = function (e) {
+    // Prevent default client redirect
+      e.preventDefault();
+    // Create POST with 'description' key-value pair in request body
+      fetch('/shows/create', {
+          method: 'POST',
+          mode: 'same-origin',
+          body: JSON.stringify({
+              'artist_id': document.getElementById('artist_id').value,
+              'venue_id': document.getElementById('venue_id').value,
+              'start_time': document.getElementById('start_time').value
+          }),
+          headers: {
+              'content-type': 'application/json',
+          }
+    // Convert response from string to JSON
+      }).then(function(response) {
+          return response.json();
+      }).then(function(jsonResponse){
+          // TODO flash success message
+      }).catch(function () {
+          // Show (hidden by default) error message if AJAX request fails at any point
+          return document.getElementById('error').classList.remove('hidden');
+      });
+  }; 
+}
+
+function artistFormSubmitHandler() {
+  // On form submit, create request for new artist and handle response
+  document.getElementById('create-artist-form').onsubmit = function (e) {
+      // Prevent default client redirect
+        e.preventDefault();
+      // Get multi-select values
+        genresElement = document.getElementById('genres');
+        genresValues = getMultiselectValues(genresElement);
+      // Create POST with 'description' key-value pair in request body
+        fetch('/artists/create', {
+            method: 'POST',
+            body: JSON.stringify({
+                'name': document.getElementById('name').value,
+                'city': document.getElementById('city').value,
+                'state': document.getElementById('state').value,
+                'phone': document.getElementById('phone').value,
+                'genres': genresValues,
+                'facebook-link': document.getElementById('facebook_link').value
+            }),
+            headers: {
+                'content-type': 'application/json'
+            }
+      // Convert response from string to JSON
+        }).then(function(response) {
+            return response.json();
+        }).then(function(jsonResponse){
+            // TODO flash success message
+        }).catch(function () {
+            // Show (hidden by default) error message if AJAX request fails at any point
+            return document.getElementById('error').classList.remove('hidden');
+        });
+    };
+}
+
+function venueFormSubmitHandler() {
+  // On form submit, create request for new venue and handle response
+  document.getElementById('create-venue-form').onsubmit = function (e) {
+    // Prevent default client redirect
+      e.preventDefault();
+    // Create POST with 'description' key-value pair in request body
+      fetch('/venues/create', {
+          method: 'POST',
+          body: JSON.stringify({
+              'name': document.getElementById('name').value,
+              'city': document.getElementById('city').value,
+              'state': document.getElementById('state').value,
+              'address': document.getElementById('address').value,
+              'phone': document.getElementById('phone').value,
+              'genres': document.getElementById('genres').value,
+              'facebook_link': document.getElementById('facebook_link').value
+          }),
+          headers: {
+              'content-type': 'application/json'
+          }
+    // Convert response from string to JSON
+      }).then(function(response) {
+          return response.json();
+      }).then(function(jsonResponse){
+          // TODO flash success message
+      }).catch(function () {
+          // Show (hidden by default) error message if AJAX request fails at any point
+          return document.getElementById('error').classList.remove('hidden');
+      });
+  };
+}
+
+var createShowForm = document.getElementById('create-show-form');
+    if(createShowForm){
+        showFormSubmitHandler();
+    }
+
+var createArtistForm = document.getElementById('create-artist-form');
+if(createArtistForm){
+    artistFormSubmitHandler();
+}
+
+var createVenueForm = document.getElementById('create-venue-form');
+if(createVenueForm){
+    venueFormSubmitHandler();
+}

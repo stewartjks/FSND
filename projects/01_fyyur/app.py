@@ -422,10 +422,15 @@ def create_show_submission():
   error = False
   body = {}
   try:
+    print('Request received')
     show_artist_id = request.get_json()['artist_id']
+    print(show_artist_id)
     show_venue_id = request.get_json()['venue_id']
+    print(venue_id)
     show_start_time = request.get_json()['start_time']
+    print(start_time)
     new_show = Show(artist_id = show_artist_id, venue_id = show_venue_id, start_time = show_start_time)
+    print(new_show)
     # Add new artist record to db
     db.session.add(new_show)
     db.session.commit()

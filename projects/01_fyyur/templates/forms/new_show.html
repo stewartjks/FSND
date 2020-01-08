@@ -22,31 +22,3 @@
     </form>
   </div>
 {% endblock %}
-
-<script>
-// On form submit, create request for new show and handle response
-document.getElementById('create-show-form').onsubmit = function (e) {
-  // Prevent default client redirect
-    e.preventDefault();
-  // Create POST with 'description' key-value pair in request body
-    fetch('/shows/create', {
-        method: 'POST',
-        body: JSON.stringify({
-            'artist_id': document.getElementById('artist_id').value,
-            'venue_id': document.getElementById('venue_id').value,
-            'start_time': document.getElementById('start_time').value
-        }),
-        headers: {
-            'content-type': 'application/json'
-        }
-  // Convert response from string to JSON
-    }).then(function(response) {
-        return response.json();
-    }).then(function(jsonResponse){
-        // TODO flash success message
-    }).catch(function () {
-        // Show (hidden by default) error message if AJAX request fails at any point
-        return document.getElementById('error').classList.remove('hidden');
-    });
-};
-</script>
