@@ -15,7 +15,7 @@ from flask_wtf import Form
 from forms import *
 import sys
 from flask_migrate import Migrate
-import datetime
+from datetime import datetime
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -103,7 +103,6 @@ app.jinja_env.filters['datetime'] = format_datetime
 @app.route('/')
 def index():
   return render_template('pages/home.html')
-
 
 #  Venues
 #  ----------------------------------------------------------------
@@ -247,14 +246,26 @@ def show_artist(artist_id):
   genres_concatenated = data.genres
   data.genres = re.split(',', genres_concatenated)
   
-  # Split shows into those in the future versus the past
-    # shows = data.shows
-    # for show in shows:
-    #   now = datetime.utcnow()
-    #   if show.start_time <= now:
-    #     data.upcoming_shows.remove(show)
-    #   else:
-    #     data.past_shows.remove(show)
+  # TODO Split shows into those in the future versus the past
+  data.upcoming_shows_count = Show.query.filter_by(artist_id=artist_id).count()
+  upcoming_shows = []
+  past_shows = []
+  current_time = datetime.now()
+  shows = Show.query.filter_by(artist_id=artist_id).all()
+  for show in shows:
+    # TODO Add required second argument with datetime format
+    show_datetime = datetime.strptime(show.start_time)
+    if show.start_time > current_time:
+      upcoming_shows.append(show)
+    elif show.start_time <= current_time:
+      past_shows.append(show)
+  data.append(
+    {
+      "upcoming_shows": upcoming_shows,
+      "past_shows": past_shows
+    }
+  )
+
   return render_template('pages/show_artist.html', artist=data)
 
 #  Update
