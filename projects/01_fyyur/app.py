@@ -119,23 +119,27 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO num_shows should be aggregated based on number of upcoming shows per venue.
+  # TODO Define number of upcoming shows, including addtl filter to limit to shows in the future
+    # num_upcoming_shows = db.session.query(Shows).filter_by(city=city).count()
   data = []
+  cities = []
   venues = db.session.query(Venue).all()
   for venue in venues:
     current_venue = Venue.query.get(venue.id)
     city = current_venue.city
-    state = current_venue.state
-    venues = Venue.query.filter_by(city=city).all()
-    # TODO define number of upcoming shows, including addtl filter to limit to shows in the future
-    # num_upcoming_shows = db.session.query(Shows).filter_by(city=city).count()
-    data.append(
-      {
-        "city": city,
-        "state": state,
-        "venues": venues
-      }
-    )
+    if city in cities:
+      pass
+    else:
+      state = current_venue.state
+      venues = Venue.query.filter_by(city=city).all()
+      data.append(
+        {
+          "city": city,
+          "state": state,
+          "venues": venues
+        }
+      )
+      cities.append(city)
   return render_template('pages/venues.html', areas = data)
 
 # @app.route('/shows')
