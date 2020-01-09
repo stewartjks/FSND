@@ -124,6 +124,7 @@ def venues():
   data = []
   cities = []
   venues = db.session.query(Venue).all()
+  shows = db.session.query(Show).all()
   for venue in venues:
     current_venue = Venue.query.get(venue.id)
     city = current_venue.city
@@ -131,31 +132,26 @@ def venues():
       pass
     else:
       state = current_venue.state
-      venues = Venue.query.filter_by(city=city).all()
+      shows = Show.query.filter_by()
+      local_venues_list = []
+      all_local_venues = Venue.query.filter_by(city=city).all()
+      for local_venue in all_local_venues:
+        local_venues_list.append(
+          {
+            "id": local_venue.id,
+            "name": local_venue.name,
+            "num_upcoming_shows": Show.query.filter_by(venue_id=local_venue.id).count()
+          }
+        )
       data.append(
         {
           "city": city,
           "state": state,
-          "venues": venues
+          "venues": local_venues_list
         }
       )
       cities.append(city)
   return render_template('pages/venues.html', areas = data)
-
-# @app.route('/shows')
-# def shows():
-#   shows = Show.query.all()
-#   data = []
-#   for show in shows:
-#     venue = db.session.query(Venue).filter_by(id=show.venue_id).first()
-#     artist = db.session.query(Artist).filter_by(id=show.artist_id).first()
-#     data.append(
-#       {
-#         "venue_id": show.venue_id,
-#         "venue_name": venue.name
-#       }
-#     )
-#   return render_template('pages/shows.html', shows=data)
 
 # data=[{
   #   "city": "San Francisco",
