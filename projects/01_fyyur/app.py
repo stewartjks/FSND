@@ -44,14 +44,6 @@ show_components = db.Table('show_components',
     db.Column('show_id', db.Integer, db.ForeignKey('Show.id'), primary_key = True)
 )
 
-# TODO Remove unnecessary Area model
-class Area(db.Model):
-  __tablename__ = 'Area'
-  id = db.Column(db.Integer, primary_key = True)
-  city = db.Column(db.String(500), nullable = False)
-  state = db.Column(db.String(500), nullable = False)
-  venues = db.relationship('Venue', backref = 'Area', lazy = True)
-
 class Venue(db.Model):
     __tablename__ = 'Venue'
     id = db.Column(db.Integer, primary_key = True)
@@ -66,7 +58,6 @@ class Venue(db.Model):
     website = db.Column(db.String(500))
     seeking_talent = db.Column(db.Boolean, default = True)
     seeking_description = db.Column(db.String(250))
-    area_id = db.Column(db.Integer, db.ForeignKey('Area.id'))
     shows = db.relationship('Show', secondary = show_components, backref = db.backref('Venue', lazy = True))
   
 class Artist(db.Model):
