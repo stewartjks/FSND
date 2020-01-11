@@ -52,7 +52,7 @@ class Venue(db.Model):
     state = db.Column(db.String(500), nullable = False)
     address = db.Column(db.String(120), nullable = False)
     phone = db.Column(db.String(120), nullable = False)
-    image_link = db.Column(db.String(500))
+    image_link = db.Column(db.String(500), default = "https://cdn10.phillymag.com/wp-content/uploads/sites/3/2018/11/live-music-concert-venue-philadelphia-1024x683.jpg")
     facebook_link = db.Column(db.String(120), nullable = False)
     genres = db.Column(db.String(120), nullable = False)
     website = db.Column(db.String(500))
@@ -80,6 +80,7 @@ class Show(db.Model):
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable = False)
   artist = db.relationship('Artist', backref = 'Show', lazy=True)
   venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable = False)
+  venue = db.relationship('Venue', backref='Show', lazy=True)
   start_time = db.Column(db.String(500), nullable = False)
 
 #----------------------------------------------------------------------------#
@@ -243,11 +244,10 @@ def show_artist(artist_id):
   data = []
   current_artist = Artist.query.get(artist_id)
   current_artist_all = Artist.query.filter_by(id=artist_id).all()
-  print(current_artist_all[0].name)
   # Convert genres to appropriately delimited values in a list
   current_artist_genres_list = re.split(',', current_artist.genres)
-  # TODO count shows only if occuring in the future
-  num_upcoming_shows = Show.query.filter_by(artist_id=artist_id).count()
+  # Initialize count of shows
+  num_upcoming_shows = 0
   # Split shows into those in the future versus the past
   upcoming_shows = []
   past_shows = []
@@ -256,9 +256,26 @@ def show_artist(artist_id):
   for show in shows:
     show_datetime = datetime.strptime(show.start_time, '%Y-%m-%d %H:%M:%S')
     if show_datetime > current_time:
-      upcoming_shows.append(show)
+      num_upcoming_shows += 1
+      upcoming_shows.append({
+        "id": show.id,
+        "artist_id": show.artist_id,
+        "artist": show.artist,
+        "venue_id": show.venue_id,
+        "venue_name": show.venue.name,
+        "venue_image_link": show.venue.image_link,
+        "start_time": show.start_time
+      })
     elif show_datetime <= current_time:
-      past_shows.append(show)
+      past_shows.append({
+        "id": show.id,
+        "artist_id": show.artist_id,
+        "artist": show.artist,
+        "venue_id": show.venue_id,
+        "venue_name": show.venue.name,
+        "venue_image_link": show.venue.image_link,
+        "start_time": show.start_time
+      })
   data.append(
     {
       "id": current_artist.id,
@@ -268,7 +285,7 @@ def show_artist(artist_id):
       "state": current_artist.state,
       "phone": current_artist.phone,
       "website": current_artist.website,
-      "facebook_link": current_artist.image_link,
+      "facebook_link": current_artist.facebook_link,
       "seeking_venue": current_artist.seeking_venues,
       "image_link": current_artist.image_link,
       "upcoming_shows_count": num_upcoming_shows,
