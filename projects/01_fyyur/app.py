@@ -58,7 +58,7 @@ class Venue(db.Model):
     website = db.Column(db.String(500))
     seeking_talent = db.Column(db.Boolean, default = True)
     seeking_description = db.Column(db.String(250))
-    shows = db.relationship('Show', secondary = show_components, backref = db.backref('Venue', lazy = True))
+    shows = db.relationship('Show', backref = 'Venue', lazy = True)
   
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -160,9 +160,28 @@ def search_venues():
 def show_venue(venue_id):
   # Shows the venue page with the given venue_id
   data = Venue.query.get(venue_id)
+  print(data)
   # Split into multiple discrete genres using a delimiter
   genres_concatenated = data.genres
   data.genres = re.split(',', genres_concatenated)
+  # Append data on past and upcoming shows
+  # shows = Show.query.filter_by(venue_id=venue_id).all()
+  num_upcoming_shows = 0
+  upcoming_shows = []
+  past_shows = []
+  current_time = datetime.now()
+  for show in data.shows:
+    show.artist_image_link = show.artist.image_link
+    show.artist_name = show.artist.name
+    show_datetime = datetime.strptime(show.start_time, '%Y-%m-%d %H:%M:%S')
+    if show_datetime > current_time:
+      num_upcoming_shows += 1
+      upcoming_shows.append(show)
+    elif show_datetime <= current_time:
+      past_shows.append(show)
+  data.past_shows = past_shows
+  data.upcoming_shows = upcoming_shows
+  data.upcoming_shows_count = num_upcoming_shows
   return render_template('pages/show_venue.html', venue=data)
 
 #  Create Venue
@@ -220,7 +239,6 @@ def delete_venue(venue_id):
 #  ----------------------------------------------------------------
 @app.route('/artists')
 def artists():
-  # TODO: replace with real data returned from querying the database
   data = Artist.query.order_by('id').all()
   return render_template('pages/artists.html', artists=data)
 
@@ -243,7 +261,6 @@ def search_artists():
 def show_artist(artist_id):
   data = []
   current_artist = Artist.query.get(artist_id)
-  current_artist_all = Artist.query.filter_by(id=artist_id).all()
   # Convert genres to appropriately delimited values in a list
   current_artist_genres_list = re.split(',', current_artist.genres)
   # Initialize count of shows
