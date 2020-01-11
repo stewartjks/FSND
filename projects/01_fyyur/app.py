@@ -24,7 +24,7 @@ from datetime import datetime
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
-app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_ECHO'] = False
 db = SQLAlchemy(app)
 
 # Connect to local postgresql database
@@ -120,7 +120,6 @@ def venues():
       pass
     else:
       state = current_venue.state
-      shows = Show.query.filter_by()
       local_venues_list = []
       all_local_venues = Venue.query.filter_by(city=city).all()
       for local_venue in all_local_venues:
@@ -241,32 +240,45 @@ def search_artists():
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
-  data = Artist.query.get(artist_id)
-  # Split into multiple discrete genres using a delimiter
-  genres_concatenated = data.genres
-  data.genres = re.split(',', genres_concatenated)
-  
-  # TODO Split shows into those in the future versus the past
-  data.upcoming_shows_count = Show.query.filter_by(artist_id=artist_id).count()
+  data = []
+  current_artist = Artist.query.get(artist_id)
+  current_artist_all = Artist.query.filter_by(id=artist_id).all()
+  print(current_artist_all[0].name)
+  # Convert genres to appropriately delimited values in a list
+  current_artist_genres_list = re.split(',', current_artist.genres)
+  # TODO count shows only if occuring in the future
+  num_upcoming_shows = Show.query.filter_by(artist_id=artist_id).count()
+  # Split shows into those in the future versus the past
   upcoming_shows = []
   past_shows = []
   current_time = datetime.now()
   shows = Show.query.filter_by(artist_id=artist_id).all()
   for show in shows:
-    # TODO Add required second argument with datetime format
-    show_datetime = datetime.strptime(show.start_time)
-    if show.start_time > current_time:
+    show_datetime = datetime.strptime(show.start_time, '%Y-%m-%d %H:%M:%S')
+    if show_datetime > current_time:
       upcoming_shows.append(show)
-    elif show.start_time <= current_time:
+    elif show_datetime <= current_time:
       past_shows.append(show)
   data.append(
     {
+      "id": current_artist.id,
+      "name": current_artist.name,
+      "genres": current_artist_genres_list,
+      "city": current_artist.city,
+      "state": current_artist.state,
+      "phone": current_artist.phone,
+      "website": current_artist.website,
+      "facebook_link": current_artist.image_link,
+      "seeking_venue": current_artist.seeking_venues,
+      "image_link": current_artist.image_link,
+      "upcoming_shows_count": num_upcoming_shows,
       "upcoming_shows": upcoming_shows,
       "past_shows": past_shows
     }
   )
-
-  return render_template('pages/show_artist.html', artist=data)
+  # Return the first list item rather than a list of multiple artists
+  data = data[0]
+  return render_template('pages/show_artist.html', artist = data)
 
 #  Update
 #  ----------------------------------------------------------------
@@ -416,7 +428,6 @@ def create_show_submission():
     show_venue_id = request.get_json()['venue_id']
     show_start_time = request.get_json()['start_time']
     new_show = Show(artist_id = show_artist_id, venue_id = show_venue_id, start_time = show_start_time)
-    print(new_show)
     # Add new artist record to db
     db.session.add(new_show)
     db.session.commit()
