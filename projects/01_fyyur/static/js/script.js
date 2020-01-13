@@ -42,9 +42,11 @@ function showFormSubmitHandler() {
   }
 }
 
+// TODO refactor fetch() call to call update or edit routes depending on form ID
 function artistFormSubmitHandler() {
   // On form submit, create request for new artist and handle response
-  document.getElementById('create-artist-form').onsubmit = function (e) {
+  forms = document.getElementsByClassName('form');
+  forms[0].onsubmit = function (e) {
       // Prevent default client redirect
         e.preventDefault();
       // Get multi-select values
@@ -68,9 +70,11 @@ function artistFormSubmitHandler() {
   };
 }
 
+// TODO refactor fetch() call to call update or edit routes depending on form ID
 function venueFormSubmitHandler() {
   // On form submit, create request for new venue and handle response
-  document.getElementById('create-venue-form').onsubmit = function (e) {
+  forms = document.getElementsByClassName('form');
+  forms[0].onsubmit = function (e) {
     // Prevent default client redirect
       e.preventDefault();
     // Create POST with 'description' key-value pair in request body
@@ -98,11 +102,13 @@ var createShowForm = document.getElementById('create-show-form');
     }
 
 var createArtistForm = document.getElementById('create-artist-form');
-if(createArtistForm){
+var editArtistForm = document.getElementById('edit-artist-form');
+if(createArtistForm || editArtistForm){
     artistFormSubmitHandler();
 }
 
 var createVenueForm = document.getElementById('create-venue-form');
-if(createVenueForm){
+var editVenueForm = document.getElementById('edit-venue-form');
+if(createVenueForm || editVenueForm){
     venueFormSubmitHandler();
 }
