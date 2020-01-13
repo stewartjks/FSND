@@ -77,9 +77,10 @@ function artistFormSubmitHandler() {
             return response.json();
         }).then(function(jsonResponse){
             // TODO flash success message
-        }).catch(function () {
-            // Show (hidden by default) error message if AJAX request fails at any point
-            return document.getElementById('error').classList.remove('hidden');
+            return console.log(jsonResponse);
+        }).catch(function(e) {
+              // Show (hidden by default) error message if AJAX request fails at any point
+                return console.log(e);
         });
     };
 }

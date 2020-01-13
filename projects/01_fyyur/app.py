@@ -408,16 +408,15 @@ def create_artist_submission():
   finally:
     db.session.close()
   if error:
+    flash('Something went wrong. Please double-check your submission and try again.')
     abort(400)
   else:
-    return jsonify(body)
-
-  # TODO: Modify data to be the data object returned from db insertion
-  # on successful db insert, flash success
-  flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
-  return render_template('pages/home.html')
+    flash('Artist ' + new_artist_name + ' was successfully listed!')
+    resp = jsonify(body)
+    print(resp)
+    # TODO flash message should render at this point, not after one additional route is requested
+    return redirect(url_for('artists'))
+    # return render_template('forms/new_artist.html')
 
 
 #  Shows
@@ -454,7 +453,6 @@ def create_show_submission():
   # TODO: Make sure data validates properly
   # TODO: Add responses for success and error
     # e.g., flash('An error occurred. Show could not be listed.')
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
   error = False
   body = {}
   try:
@@ -477,9 +475,10 @@ def create_show_submission():
     db.session.close()
   if error:
     abort(400)
+    flash('Something went wrong. Please double-check your submission and try again.')
   else:
     flash('Show was successfully listed!')
-    return render_template('pages/home.html')
+    return render_template('pages/home.html', error=error)
 
 @app.errorhandler(404)
 def not_found_error(error):
