@@ -37,13 +37,6 @@ migrate = Migrate(app, db)
 # Models.
 #----------------------------------------------------------------------------#
 
-# Implement association table between artists and venues
-show_components = db.Table('show_components', 
-    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key = True),
-    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key = True),
-    db.Column('show_id', db.Integer, db.ForeignKey('Show.id'), primary_key = True)
-)
-
 class Venue(db.Model):
     __tablename__ = 'Venue'
     id = db.Column(db.Integer, primary_key = True)
@@ -64,8 +57,8 @@ class Artist(db.Model):
     __tablename__ = 'Artist'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120))
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
