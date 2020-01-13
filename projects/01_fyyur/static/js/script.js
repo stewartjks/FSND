@@ -38,16 +38,8 @@ function showFormSubmitHandler() {
           headers: {
               'content-type': 'application/json',
           }
-    // Convert response from string to JSON
-      }).then(function(response) {
-          return response.json();
-      }).then(function(jsonResponse){
-          // TODO flash success message
-      }).catch(function () {
-          // Show (hidden by default) error message if AJAX request fails at any point
-          return document.getElementById('error').classList.remove('hidden');
       });
-  }; 
+  }
 }
 
 function artistFormSubmitHandler() {
@@ -72,17 +64,8 @@ function artistFormSubmitHandler() {
             headers: {
                 'content-type': 'application/json'
             }
-      // Convert response from string to JSON
-        }).then(function(response) {
-            return response.json();
-        }).then(function(jsonResponse){
-            // TODO flash success message
-            return console.log(jsonResponse);
-        }).catch(function(e) {
-              // Show (hidden by default) error message if AJAX request fails at any point
-                return console.log(e);
         });
-    };
+  };
 }
 
 function venueFormSubmitHandler() {
@@ -105,14 +88,6 @@ function venueFormSubmitHandler() {
           headers: {
               'content-type': 'application/json'
           }
-    // Convert response from string to JSON
-      }).then(function(response) {
-          return response.json();
-      }).then(function(jsonResponse){
-          // TODO flash success message
-      }).catch(function () {
-          // Show (hidden by default) error message if AJAX request fails at any point
-          return document.getElementById('error').classList.remove('hidden');
       });
   };
 }

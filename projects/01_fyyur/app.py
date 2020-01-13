@@ -394,13 +394,6 @@ def create_artist_submission():
     # Add new artist record to db
     db.session.add(new_artist)
     db.session.commit()
-    # Return response object
-    body['name'] = new_artist.name
-    body['city'] = new_artist.city
-    body['state'] = new_artist.state
-    body['phone'] = new_artist.phone
-    body['genres'] = new_artist.genres
-    body['facebook_link'] = new_artist.facebook_link
   except:
     error = True
     db.session.rollback()
@@ -412,11 +405,8 @@ def create_artist_submission():
     abort(400)
   else:
     flash('Artist ' + new_artist_name + ' was successfully listed!')
-    resp = jsonify(body)
-    print(resp)
     # TODO flash message should render at this point, not after one additional route is requested
-    return redirect(url_for('artists'))
-    # return render_template('forms/new_artist.html')
+    return render_template('pages/home.html')
 
 
 #  Shows
