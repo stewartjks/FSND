@@ -187,10 +187,6 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-  # TODO: Make sure data validates properly
-  # TODO: Add responses for success and error
-    # e.g., flash('An error occurred. Venue could not be created.')
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
   error = False
   body = {}
   try:
@@ -358,7 +354,6 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-  # TODO: take values from the form submitted, and update existing venue record with ID <venue_id> using the new attributes
   error = False
   body = {}
   try:
@@ -402,9 +397,6 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  # Called upon submitting the new artist listing form
-  # TODO: Make sure data validates properly
-  # TODO: Add responses for success and error
   error = False
   body = {}
   try:
@@ -429,7 +421,6 @@ def create_artist_submission():
     abort(400)
   else:
     flash('Artist ' + new_artist_name + ' was successfully listed!')
-    # TODO flash message should render at this point, not after one additional route is requested
     return render_template('pages/home.html')
 
 
@@ -464,9 +455,6 @@ def create_shows():
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
   # Called to create new shows in the db, upon submitting new show listing form
-  # TODO: Make sure data validates properly
-  # TODO: Add responses for success and error
-    # e.g., flash('An error occurred. Show could not be listed.')
   error = False
   body = {}
   try:
