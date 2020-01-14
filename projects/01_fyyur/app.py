@@ -317,26 +317,25 @@ def edit_artist(artist_id):
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-  # TODO: take values from the form submitted, and update existing artist record with ID <artist_id> using the new attributes
   error = False
   body = {}
   try:
     new_artist_name = request.get_json()['name']
-    print(new_artist_name)
     new_artist_city = request.get_json()['city']
-    print(new_artist_city)
     new_artist_state = request.get_json()['state']
-    print(new_artist_state)
     new_artist_phone = request.get_json()['phone']
-    print(new_artist_phone)
     new_artist_genres = request.get_json()['genres']
-    print(new_artist_genres)
     new_artist_facebook_link = request.get_json()['facebook-link']
-    print(new_artist_facebook_link)
-    updated_artist = Artist.update().values(name = new_artist_name, city = new_artist_city, state = new_artist_state, genres = new_artist_genres, facebook_link = new_artist_facebook_link).where(Artist.id == artist_id)
-    print(updated_artist)
-    # Add new artist record to db
-    db.session.add(updated_artist)
+    db.session.query(Artist).filter(Artist.id == artist_id).update(
+      {
+        'name': new_artist_name,
+        'city': new_artist_city,
+        'state': new_artist_state,
+        'phone': new_artist_phone,
+        'genres': new_artist_genres,
+        'facebook_link': new_artist_facebook_link
+      }
+    )
     db.session.commit()
   except:
     error = True
@@ -349,7 +348,6 @@ def edit_artist_submission(artist_id):
     abort(400)
   else:
     flash('Artist ' + new_artist_name + ' was successfully updated!')
-    # TODO flash message should render at this point, not after one additional route is requested
     return render_template('pages/home.html')
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
@@ -361,8 +359,38 @@ def edit_venue(venue_id):
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing venue record with ID <venue_id> using the new attributes
-  
-  return redirect(url_for('show_venue', venue_id=venue_id))
+  error = False
+  body = {}
+  try:
+    new_venue_name = request.get_json()['name']
+    new_venue_city = request.get_json()['city']
+    new_venue_state = request.get_json()['state']
+    new_venue_phone = request.get_json()['phone']
+    new_venue_genres = request.get_json()['genres']
+    new_venue_facebook_link = request.get_json()['facebook-link']
+    db.session.query(Venue).filter(Venue.id == venue_id).update(
+      {
+        'name': new_venue_name,
+        'city': new_venue_city,
+        'state': new_venue_state,
+        'phone': new_venue_phone,
+        'genres': new_venue_genres,
+        'facebook_link': new_venue_facebook_link
+      }
+    )
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  if error:
+    flash('Something went wrong. Please double-check your submission and try again.')
+    abort(400)
+  else:
+    flash('Artist ' + new_venue_name + ' was successfully updated!')
+    return render_template('pages/home.html')
 
 #  Create Artist
 #  ----------------------------------------------------------------

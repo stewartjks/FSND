@@ -42,18 +42,26 @@ function showFormSubmitHandler() {
   }
 }
 
-// TODO refactor fetch() call to call update or edit routes depending on form ID
 function artistFormSubmitHandler() {
   // On form submit, create request for new artist and handle response
-  forms = document.getElementsByClassName('form');
-  forms[0].onsubmit = function (e) {
+  form = document.getElementsByClassName('form')[0];
+  if (form.id == 'create-artist-form') {
+    fetch_id = '';
+    fetch_verb = 'create';
+  }
+  else if (form.id == 'edit-artist-form') {
+    // Get artist ID from classList
+    fetch_id = form.classList[1];
+    fetch_verb = '/edit';
+  }
+  form.onsubmit = function(e) {
       // Prevent default client redirect
         e.preventDefault();
       // Get multi-select values
         genresElement = document.getElementById('genres');
         genresValues = getMultiselectValues(genresElement);
       // Create POST with 'description' key-value pair in request body
-        fetch('/artists/create', {
+        fetch('/artists/' + fetch_id + fetch_verb, {
             method: 'POST',
             body: JSON.stringify({
                 'name': document.getElementById('name').value,
@@ -70,15 +78,23 @@ function artistFormSubmitHandler() {
   };
 }
 
-// TODO refactor fetch() call to call update or edit routes depending on form ID
 function venueFormSubmitHandler() {
   // On form submit, create request for new venue and handle response
-  forms = document.getElementsByClassName('form');
-  forms[0].onsubmit = function (e) {
+  form = document.getElementsByClassName('form')[0];
+  if (form.id == 'create-venue-form') {
+    fetch_id = '';
+    fetch_verb = 'create';
+  }
+  else if (form.id == 'edit-venue-form') {
+     // Get venue ID from classname 
+     fetch_id = form.classList[1];
+     fetch_verb = '/edit';
+  }
+  form.onsubmit = function(e) {
     // Prevent default client redirect
       e.preventDefault();
     // Create POST with 'description' key-value pair in request body
-      fetch('/venues/create', {
+      fetch('/venues/'+ fetch_id + fetch_verb, {
           method: 'POST',
           body: JSON.stringify({
               'name': document.getElementById('name').value,
