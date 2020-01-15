@@ -7,7 +7,7 @@
 			{{ venue.name }}
 		</h1>
 		<p class="subtitle">
-			ID: {{ venue.id }}
+			ID: <span id="venue-id">{{ venue.id }}</span>
 		</p>
 		<div class="genres">
 			{% for genre in venue.genres %}
@@ -28,6 +28,10 @@
 		</p>
 		<p>
 			<i class="fab fa-facebook-f"></i> {% if venue.facebook_link %}<a href="{{ venue.facebook_link }}" target="_blank">{{ venue.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
+		</p>
+		<br>
+		<p>
+			<button class="btn-delete btn btn-primary" id="delete-venue-btn">Delete {{ venue.name }}</button>
 		</p>
 		{% if venue.seeking_talent %}
 		<div class="seeking">

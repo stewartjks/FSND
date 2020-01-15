@@ -198,11 +198,9 @@ def create_venue_submission():
     venue_genres = request.get_json()['genres']
     venue_facebook_link = request.get_json()['facebook_link']
     new_venue = Venue(name = venue_name, city = venue_city, state = venue_state, address = venue_address, phone = venue_phone, genres = venue_genres, facebook_link = venue_facebook_link)
-    # Add new artist record to db
+    # Add new venue record to db
     db.session.add(new_venue)
     db.session.commit()
-    # Return response object
-    body['name'] = venue_name
   except:
     error = True
     db.session.rollback()
@@ -217,12 +215,25 @@ def create_venue_submission():
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
-  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-
-  # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
-  # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+  error = False
+  body = {}
+  try:
+    venue_to_delete = Venue.query.get(venue_id)
+    # Delete venue
+    db.session.delete(venue_to_delete)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  if error:
+    abort(400)
+    flash('Sorry, this venue could not be deleted.')
+  else:
+    flash('Venue was successfully deleted.')
+    return render_template('pages/home.html')
 
 #  Artists
 #  ----------------------------------------------------------------
@@ -423,6 +434,27 @@ def create_artist_submission():
     flash('Artist ' + new_artist_name + ' was successfully listed!')
     return render_template('pages/home.html')
 
+@app.route('/artists/<artist_id>', methods=['DELETE'])
+def delete_artist(artist_id):
+  error = False
+  body = {}
+  try:
+    artist_to_delete = Artist.query.get(artist_id)
+    # Delete artist
+    db.session.delete(artist_to_delete)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  if error:
+    abort(400)
+    flash('Sorry, this artist could not be deleted.')
+  else:
+    flash('Artist was successfully deleted.')
+    return render_template('pages/home.html')
 
 #  Shows
 #  ----------------------------------------------------------------

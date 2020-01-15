@@ -21,7 +21,8 @@ function getMultiselectValues(multiselectElement) {
   return result;
 }
 
-// On form submit, create request for new show and handle response
+// On form submit, create request for new show, artist, or venue and handle response
+
 function showFormSubmitHandler() {
   document.getElementById('create-show-form').onsubmit = function (e) {
     // Prevent default client redirect
@@ -44,15 +45,15 @@ function showFormSubmitHandler() {
 
 function artistFormSubmitHandler() {
   // On form submit, create request for new artist and handle response
-  form = document.getElementsByClassName('form')[0];
+  var form = document.getElementsByClassName('form')[0];
   if (form.id == 'create-artist-form') {
     fetch_id = '';
     fetch_verb = 'create';
   }
   else if (form.id == 'edit-artist-form') {
     // Get artist ID from classList
-    fetch_id = form.classList[1];
-    fetch_verb = '/edit';
+    var fetch_id = form.classList[1];
+    var fetch_verb = '/edit';
   }
   form.onsubmit = function(e) {
       // Prevent default client redirect
@@ -112,19 +113,61 @@ function venueFormSubmitHandler() {
   };
 }
 
+// Handle artist and venue deletions
+
+function deleteArtistHandler() {
+  var deleteBtn = document.getElementById('delete-artist-btn');
+  var artist_id = document.getElementById('artist-id').innerHTML.toString();
+  deleteBtn.onclick = function() {
+    fetch('/artists/'+artist_id, {
+      method: 'DELETE',
+      body: JSON.stringify({
+        'id': artist_id
+      }),
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+  };
+}
+
+function deleteVenueHandler() {
+  var deleteBtn = document.getElementById('delete-venue-btn');
+  var venue_id = document.getElementById('venue-id').innerHTML.toString();
+  deleteBtn.onclick = function() {
+    fetch('/venues/'+venue_id, {
+      method: 'DELETE',
+      body: JSON.stringify({
+        'id': venue_id
+      }),
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+  };
+}
+
+// Add handler(s) if the associated form / buttton exists on the current page
 var createShowForm = document.getElementById('create-show-form');
-    if(createShowForm){
+var createArtistForm = document.getElementById('create-artist-form');
+var createVenueForm = document.getElementById('create-venue-form');
+var editArtistForm = document.getElementById('edit-artist-form');
+var editVenueForm = document.getElementById('edit-venue-form');
+var deleteArtist = document.getElementById('delete-artist-btn');
+var deleteVenue = document.getElementById('delete-venue-btn');
+
+if(createShowForm){
         showFormSubmitHandler();
     }
-
-var createArtistForm = document.getElementById('create-artist-form');
-var editArtistForm = document.getElementById('edit-artist-form');
 if(createArtistForm || editArtistForm){
     artistFormSubmitHandler();
 }
-
-var createVenueForm = document.getElementById('create-venue-form');
-var editVenueForm = document.getElementById('edit-venue-form');
 if(createVenueForm || editVenueForm){
     venueFormSubmitHandler();
+}
+if(deleteArtist){
+  deleteArtistHandler();
+}
+if(deleteVenue){
+  deleteVenueHandler();
 }
