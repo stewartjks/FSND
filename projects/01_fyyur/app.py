@@ -235,6 +235,7 @@ def delete_venue(venue_id):
     flash('Venue was successfully deleted.')
     return render_template('pages/home.html')
 
+
 #  Artists
 #  ----------------------------------------------------------------
 @app.route('/artists')
@@ -247,13 +248,21 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
+  search_term = request.get_json()['search_term']
+  print('search_term: '+ search_term)
+  matches = Artist.query.filter(Artist.name.like('%' + search_term + '%')).all()
+  print(matches)
+  for match in matches:
+    print(match)
+  # TODO aggregate matches
+  # TODO compose `data` object by looping over matches
   response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
+    # "count": 1,
+    # "data": [{
+    #   "id": 4,
+    #   "name": "Guns N Petals",
+    #   "num_upcoming_shows": 0,
+    # }]
   }
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
@@ -314,7 +323,7 @@ def show_artist(artist_id):
   data = data[0]
   return render_template('pages/show_artist.html', artist = data)
 
-#  Update
+#  Update Artist
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
@@ -456,8 +465,9 @@ def delete_artist(artist_id):
     flash('Artist was successfully deleted.')
     return render_template('pages/home.html')
 
+#----------------------------------------------------------------------------#
 #  Shows
-#  ----------------------------------------------------------------
+#----------------------------------------------------------------------------#
 # Displays list of shows at /shows
 @app.route('/shows')
 def shows():
@@ -514,6 +524,9 @@ def create_show_submission():
     flash('Show was successfully listed!')
     return render_template('pages/home.html', error=error)
 
+#----------------------------------------------------------------------------#
+# Error handlers
+#----------------------------------------------------------------------------#
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('errors/404.html'), 404
@@ -521,7 +534,6 @@ def not_found_error(error):
 @app.errorhandler(500)
 def server_error(error):
     return render_template('errors/500.html'), 500
-
 
 if not app.debug:
     file_handler = FileHandler('error.log')

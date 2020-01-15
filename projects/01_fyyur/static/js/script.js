@@ -3,6 +3,17 @@ window.parseISOString = function parseISOString(s) {
   return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
 };
 
+// Add handler(s) if the associated form / buttton exists on the current page
+var createShowForm = document.getElementById('create-show-form');
+var createArtistForm = document.getElementById('create-artist-form');
+var createVenueForm = document.getElementById('create-venue-form');
+var editArtistForm = document.getElementById('edit-artist-form');
+var editVenueForm = document.getElementById('edit-venue-form');
+var deleteArtist = document.getElementById('delete-artist-btn');
+var deleteVenue = document.getElementById('delete-venue-btn');
+var searchArtists = document.getElementById('search-artists');
+var searchVenues = document.getElementById('search-venues');
+
 // Get all values of multi-select input elements (such as Genre)
 function getMultiselectValues(multiselectElement) {
   var result = [];
@@ -147,14 +158,39 @@ function deleteVenueHandler() {
   };
 }
 
-// Add handler(s) if the associated form / buttton exists on the current page
-var createShowForm = document.getElementById('create-show-form');
-var createArtistForm = document.getElementById('create-artist-form');
-var createVenueForm = document.getElementById('create-venue-form');
-var editArtistForm = document.getElementById('edit-artist-form');
-var editVenueForm = document.getElementById('edit-venue-form');
-var deleteArtist = document.getElementById('delete-artist-btn');
-var deleteVenue = document.getElementById('delete-venue-btn');
+// TODO Handle artist and venue searches
+
+function searchArtistsHandler() { 
+  searchArtists.onsubmit = function(e) {
+    e.preventDefault();
+    var artistSearchTerm = document.getElementById('artist-search-term').value.toString();
+    fetch('/artists/search', {
+      method: 'POST',
+      body: JSON.stringify({
+        'search_term': artistSearchTerm
+      }),
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+  };
+}
+
+function searchVenuesHandler() { 
+  searchVenues.onsubmit = function(e) {
+    e.preventDefault();
+    var venueSearchTerm = document.getElementById('venue-search-term').value.toString();
+    fetch('/venues/search', {
+      method: 'POST',
+      body: JSON.stringify({
+        'search_term': venueSearchTerm
+      }),
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+  };
+}
 
 if(createShowForm){
         showFormSubmitHandler();
@@ -170,4 +206,10 @@ if(deleteArtist){
 }
 if(deleteVenue){
   deleteVenueHandler();
+}
+if(searchArtists){
+  searchArtistsHandler();
+}
+if(searchVenues){
+  searchVenuesHandler();
 }
