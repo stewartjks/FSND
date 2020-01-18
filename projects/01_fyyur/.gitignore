@@ -1,0 +1,23 @@
+# Ignore cache
+versions/__pycache__
+
+# Ignore virtualenv
+env/
+
+# Ignore error log
+error.log
+
+# Ignore migrations log
+migrations/
+
+# Ignore lib
+lib/
+
+# Ignore vscode configuration
+.vscode/
+
+# Ignore fabric files
+fabfile.*
+
+# Ignore JS libs
+static/js/libs/
