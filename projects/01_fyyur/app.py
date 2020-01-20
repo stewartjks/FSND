@@ -6,7 +6,15 @@ import json
 import dateutil.parser
 import babel
 import re
-from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort, jsonify
+from flask import (Flask,
+                  render_template,
+                  request,
+                  Response,
+                  flash,
+                  redirect,
+                  url_for,
+                  abort,
+                  jsonify)
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -51,7 +59,7 @@ class Venue(db.Model):
     website = db.Column(db.String(500))
     seeking_talent = db.Column(db.Boolean, default=True)
     seeking_description = db.Column(db.String(250))
-    shows = db.relationship('Show', backref='Venue', lazy=True)
+    shows = db.relationship('Show', backref='Venue', lazy=True, cascade="save-update, merge, delete")
   
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -65,7 +73,7 @@ class Artist(db.Model):
     facebook_link = db.Column(db.String(120), unique=True)
     website = db.Column(db.String(500))
     seeking_venues = db.Column(db.Boolean, default=True)
-    shows = db.relationship('Show', backref ='Artist', lazy=True)
+    shows = db.relationship('Show', backref ='Artist', lazy=True, cascade="save-update, merge, delete")
 
 class Show(db.Model):
   __tablename__ = 'Show'
