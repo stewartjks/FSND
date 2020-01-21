@@ -36,7 +36,6 @@ app.config['SQLALCHEMY_ECHO'] = False
 
 # Connect to local postgresql database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres@localhost:5432/fyyur'
-initial_app = app
 
 # Import models
 from models import db
