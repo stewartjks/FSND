@@ -1,6 +1,7 @@
 from app import app
 from flask_sqlalchemy import SQLAlchemy
 
+# Instantiate SQLAlchemy db object
 db = SQLAlchemy(app)
 
 class Venue(db.Model):
