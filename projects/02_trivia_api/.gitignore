@@ -23,4 +23,4 @@ fabfile.*
 static/js/libs/
 
 # Ignore node modules
-frontend/node_modules
+frontend/node_modules/
