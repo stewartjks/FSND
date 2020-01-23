@@ -21,3 +21,6 @@ fabfile.*
 
 # Ignore JS libs
 static/js/libs/
+
+# Ignore node modules
+frontend/node_modules
