@@ -29,6 +29,7 @@ from datetime import datetime
 # App Config.
 #----------------------------------------------------------------------------#
 
+# Set Flask configuration
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
@@ -38,7 +39,10 @@ app.config['SQLALCHEMY_ECHO'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres@localhost:5432/fyyur'
 
 # Import models
-from models import db
+from models import db, Venue, Artist, Show
+
+# Initialize SQLAlchemy with current app
+db.init_app(app)
 
 # Instantiate migration object
 migrate = Migrate(app, db)
