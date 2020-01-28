@@ -16,7 +16,7 @@ CORS(app)
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
-# db_drop_and_create_all()
+db_drop_and_create_all()
 
 ## ROUTES
 '''
@@ -27,6 +27,17 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks')
+def get_drinks():
+    # TODO replace hard-coded value with db query
+    # Needs to accept only GET requests
+    drinks = "Macchiato, Pour Over, Espresso"
+    data_object = {
+        "success": True,
+        "drinks": drinks
+    }
+    data = jsonify(data_object)
+    return data
 
 
 '''
@@ -38,6 +49,16 @@ CORS(app)
         or appropriate status code indicating reason for failure
 '''
 
+@app.route('/drinks-detail')
+def get_drinks_details():
+    # TODO replace hard-code value with db query
+    drinks = "Macchiato: espresso with cream and foam, Pour Over: coffee made one cup at a time, Espresso: uniformly ground condensed coffee"
+    data_object = {
+        "success": True,
+        "drinks": drinks
+    }
+    data = jsonify(data_object)
+    return data
 
 '''
 @TODO implement endpoint
@@ -48,6 +69,15 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks')
+def create_drink():
+    # TODO finish implementation
+    # Needs to accept only POST requests
+    data_object = {
+        "success": True
+    }
+    data = jsonify(data_object)
+    return data
 
 
 '''
