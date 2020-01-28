@@ -1,10 +1,21 @@
 import os
-from flask import Flask, request, jsonify, abort
+from flask import (
+        Flask, 
+        render_template,
+        request,
+        Response,
+        flash,
+        redirect,
+        url_for,
+        abort,
+        jsonify
+    )
 from sqlalchemy import exc
 import json
 from flask_cors import CORS
+import sys
 
-from .database.models import db_drop_and_create_all, setup_db, Drink
+from .database.models import db, db_drop_and_create_all, setup_db, Drink
 from .auth.auth import AuthError, requires_auth
 
 app = Flask(__name__)
@@ -29,17 +40,18 @@ db_drop_and_create_all()
 '''
 @app.route('/drinks', methods=['GET'])
 def get_drinks():
-    # TODO replace hard-coded value with db query
-        # Needs to accept only GET requests
-        # drinks = Drink.short.query.all()
-    drinks = "blah"
+    drinks = Drink.query.all()
+    drink_data = []
+    for drink in drinks:
+        drink_data.append(
+            drink.short()
+        )
     data_object = {
         "success": True,
-        "drinks": drinks
+        "drinks": drink_data
     }
     data = jsonify(data_object)
     return data
-
 
 '''
 @TODO implement endpoint
@@ -73,13 +85,26 @@ def get_drinks_details():
 
 @app.route('/drinks', methods = ['POST'])
 def create_drink():
-    # TODO finish implementation
-    data_object = {
-        "success": True
-    }
-    data = jsonify(data_object)
-    return data
-
+    error = False
+    try:
+        drink_title = request.get_json()['title']
+        print(drink_title, type(drink_title))
+        drink_recipe = request.get_json()['recipe']
+        print(drink_recipe, type(drink_recipe))
+        new_drink = Drink(title = drink_title, recipe = drink_recipe)
+        print(new_drink)
+        db.session.add(new_drink)
+        db.session.commit()
+    except:
+        error = True
+        db.session.rollback()
+        print(sys.exc_info())
+    finally:
+        db.session.close()
+    if error:
+        abort(400)
+    else:
+        flash('Your drink was successfully created!')
 
 # def create_venue_submission():
 #   error = False
