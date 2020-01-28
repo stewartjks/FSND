@@ -27,11 +27,12 @@ db_drop_and_create_all()
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
-@app.route('/drinks')
+@app.route('/drinks', methods=['GET'])
 def get_drinks():
     # TODO replace hard-coded value with db query
-    # Needs to accept only GET requests
-    drinks = "Macchiato, Pour Over, Espresso"
+        # Needs to accept only GET requests
+        # drinks = Drink.short.query.all()
+    drinks = "blah"
     data_object = {
         "success": True,
         "drinks": drinks
@@ -49,7 +50,7 @@ def get_drinks():
         or appropriate status code indicating reason for failure
 '''
 
-@app.route('/drinks-detail')
+@app.route('/drinks-detail', methods = ['GET'])
 def get_drinks_details():
     # TODO replace hard-code value with db query
     drinks = "Macchiato: espresso with cream and foam, Pour Over: coffee made one cup at a time, Espresso: uniformly ground condensed coffee"
@@ -69,16 +70,43 @@ def get_drinks_details():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
-@app.route('/drinks')
+
+@app.route('/drinks', methods = ['POST'])
 def create_drink():
     # TODO finish implementation
-    # Needs to accept only POST requests
     data_object = {
         "success": True
     }
     data = jsonify(data_object)
     return data
 
+
+# def create_venue_submission():
+#   error = False
+#   body = {}
+#   try:
+#     venue_name = request.get_json()['name']
+#     venue_city = request.get_json()['city']
+#     venue_state = request.get_json()['state']
+#     venue_address = request.get_json()['address']
+#     venue_phone = request.get_json()['phone']
+#     venue_genres = request.get_json()['genres']
+#     venue_facebook_link = request.get_json()['facebook_link']
+#     new_venue = Venue(name = venue_name, city = venue_city, state = venue_state, address = venue_address, phone = venue_phone, genres = venue_genres, facebook_link = venue_facebook_link)
+#     # Add new venue record to db
+#     db.session.add(new_venue)
+#     db.session.commit()
+#   except:
+#     error = True
+#     db.session.rollback()
+#     print(sys.exc_info())
+#   finally:
+#     db.session.close()
+#   if error:
+#     abort(400)
+#   else:
+#     flash('Venue ' + venue_name + ' was successfully listed!')
+#     return render_template('pages/home.html')
 
 '''
 @TODO implement endpoint
