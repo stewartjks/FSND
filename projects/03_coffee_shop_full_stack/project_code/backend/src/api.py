@@ -91,7 +91,7 @@ def create_drink():
         print(drink_title, type(drink_title))
         drink_recipe = request.get_json()['recipe']
         print(drink_recipe, type(drink_recipe))
-        new_drink = Drink(title = "Espresso", recipe = "Make it")
+        new_drink = Drink(title = drink_title, recipe = drink_recipe)
         print(new_drink)
         new_drink.insert()
     except:
