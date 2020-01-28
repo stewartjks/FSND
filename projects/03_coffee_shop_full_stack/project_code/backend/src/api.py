@@ -91,10 +91,9 @@ def create_drink():
         print(drink_title, type(drink_title))
         drink_recipe = request.get_json()['recipe']
         print(drink_recipe, type(drink_recipe))
-        new_drink = Drink(title = drink_title, recipe = drink_recipe)
+        new_drink = Drink(title = "Espresso", recipe = "Make it")
         print(new_drink)
-        db.session.add(new_drink)
-        db.session.commit()
+        new_drink.insert()
     except:
         error = True
         db.session.rollback()
