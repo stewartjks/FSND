@@ -132,6 +132,30 @@ def create_drink():
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:drink_id>', methods = ['DELETE'])
+def delete_drink(drink_id):
+    error = False
+    try:
+        print(drink_id)
+        drink = Drink.query.get(drink_id)
+        print(drink)
+        drink.delete()
+        response_object = {
+            "success": True,
+            "delete": drink_id
+            }
+    except:
+        error = True
+        db.session.rollback()
+        print(sys.exc_info())
+    finally:
+        db.session.close()
+    if error:
+        abort(400)
+    else:
+        flash('Your drink was successfully deleted!')
+        response = json.dumps(response_object)
+        return response
 
 
 ## Error Handling
