@@ -78,13 +78,13 @@ def get_drinks_details():
         it should create a new row in the drinks table
         it should require the 'post:drinks' permission
         it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
+    returns status code 200 and json {"success": True, "drinks": drink} where drink is an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
 
 @app.route('/drinks', methods = ['POST'])
 def create_drink():
-    response = {}
+    response_object = {}
     error = False
     try:
         drink_title = request.get_json()['title']
@@ -92,9 +92,20 @@ def create_drink():
         drink_recipe = json.dumps(drink_recipe_json)
         new_drink = Drink(title = drink_title, recipe = drink_recipe)
         new_drink.insert()
-        response_object = {
-            "success": True
+        # Instructions specify that response data should inclue drink details as a list
+        new_drink_details = []
+        new_drink_details_object = {
+            "id": new_drink.id,
+            "title": drink_title,
+            "recipe": drink_recipe
+        }
+        new_drink_details.append(new_drink_details_object)
+        response_object.update(
+            {
+                "success": True,
+                "drinks": new_drink_details 
             }
+        )
     except:
         error = True
         db.session.rollback()
@@ -130,8 +141,7 @@ def update_drink(drink_id):
     if error:
         pass
     else:
-
-
+        return response
 
 '''
 @TODO implement endpoint
@@ -146,15 +156,16 @@ def update_drink(drink_id):
 @app.route('/drinks/<int:drink_id>', methods = ['DELETE'])
 def delete_drink(drink_id):
     error = False
+    response_object = {}
     try:
-        print(drink_id)
         drink = Drink.query.get(drink_id)
-        print(drink)
         drink.delete()
-        response_object = {
-            "success": True,
-            "delete": drink_id
+        response_object.update(
+            {
+                "success": True,
+                "delete": drink_id
             }
+        )
     except:
         error = True
         db.session.rollback()
