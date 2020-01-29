@@ -4,7 +4,6 @@ from flask import (
         render_template,
         request,
         Response,
-        flash,
         redirect,
         url_for,
         abort,
@@ -105,7 +104,6 @@ def create_drink():
     if error:
         abort(400)
     else:
-        flash('Your drink was successfully created!')
         response = json.dumps(response_object)
         return response
 
@@ -120,6 +118,19 @@ def create_drink():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:drink_id>', methods = ['PATCH'])
+def update_drink(drink_id):
+    error = False
+    try:
+        pass
+    except:
+        pass
+    finally:
+        pass
+    if error:
+        pass
+    else:
+
 
 
 '''
@@ -153,7 +164,6 @@ def delete_drink(drink_id):
     if error:
         abort(400)
     else:
-        flash('Your drink was successfully deleted!')
         response = json.dumps(response_object)
         return response
 
