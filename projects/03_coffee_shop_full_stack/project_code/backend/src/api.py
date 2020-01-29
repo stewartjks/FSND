@@ -64,7 +64,7 @@ def get_drinks():
 
 @app.route('/drinks-detail', methods = ['GET'])
 def get_drinks_details():
-    # TODO replace hard-code value with db query
+    
     drinks = "Macchiato: espresso with cream and foam, Pour Over: coffee made one cup at a time, Espresso: uniformly ground condensed coffee"
     data_object = {
         "success": True,
@@ -85,15 +85,17 @@ def get_drinks_details():
 
 @app.route('/drinks', methods = ['POST'])
 def create_drink():
+    response = {}
     error = False
     try:
         drink_title = request.get_json()['title']
-        print(drink_title, type(drink_title))
-        drink_recipe = request.get_json()['recipe']
-        print(drink_recipe, type(drink_recipe))
+        drink_recipe_json = request.get_json()['recipe']
+        drink_recipe = json.dumps(drink_recipe_json)
         new_drink = Drink(title = drink_title, recipe = drink_recipe)
-        print(new_drink)
         new_drink.insert()
+        response_object = {
+            "success": True
+            }
     except:
         error = True
         db.session.rollback()
@@ -104,33 +106,8 @@ def create_drink():
         abort(400)
     else:
         flash('Your drink was successfully created!')
-
-# def create_venue_submission():
-#   error = False
-#   body = {}
-#   try:
-#     venue_name = request.get_json()['name']
-#     venue_city = request.get_json()['city']
-#     venue_state = request.get_json()['state']
-#     venue_address = request.get_json()['address']
-#     venue_phone = request.get_json()['phone']
-#     venue_genres = request.get_json()['genres']
-#     venue_facebook_link = request.get_json()['facebook_link']
-#     new_venue = Venue(name = venue_name, city = venue_city, state = venue_state, address = venue_address, phone = venue_phone, genres = venue_genres, facebook_link = venue_facebook_link)
-#     # Add new venue record to db
-#     db.session.add(new_venue)
-#     db.session.commit()
-#   except:
-#     error = True
-#     db.session.rollback()
-#     print(sys.exc_info())
-#   finally:
-#     db.session.close()
-#   if error:
-#     abort(400)
-#   else:
-#     flash('Venue ' + venue_name + ' was successfully listed!')
-#     return render_template('pages/home.html')
+        response = json.dumps(response_object)
+        return response
 
 '''
 @TODO implement endpoint
