@@ -63,7 +63,6 @@ def get_drinks():
 
 @app.route('/drinks-detail', methods = ['GET'])
 def get_drinks_details():
-    
     drinks = "Macchiato: espresso with cream and foam, Pour Over: coffee made one cup at a time, Espresso: uniformly ground condensed coffee"
     data_object = {
         "success": True,
@@ -132,15 +131,38 @@ def create_drink():
 @app.route('/drinks/<int:drink_id>', methods = ['PATCH'])
 def update_drink(drink_id):
     error = False
+    response_object = {}
     try:
-        pass
+        drink = Drink.query.get(drink_id)
+        updated_drink_title = request.get_json()['title']
+        updated_drink_recipe_json = request.get_json()['recipe']
+        updated_drink_recipe = json.dumps(updated_drink_recipe_json)
+        drink.title = updated_drink_title
+        drink.recipe = updated_drink_recipe
+        drink.update()
+        new_drink_details = []
+        new_drink_details_object = {
+            "id": drink.id,
+            "title": updated_drink_title,
+            "recipe": updated_drink_recipe
+        }
+        new_drink_details.append(new_drink_details_object)
+        response_object.update(
+            {
+                "success": True,
+                "drinks": new_drink_details
+            }
+        )
     except:
-        pass
+        error = True
+        db.session.rollback()
+        print(sys.exc_info())
     finally:
-        pass
+        db.session.close()
     if error:
-        pass
+        abort(400)
     else:
+        response = json.dumps(response_object)
         return response
 
 '''
