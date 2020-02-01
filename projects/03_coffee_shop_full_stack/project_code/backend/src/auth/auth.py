@@ -19,7 +19,6 @@ class AuthError(Exception):
         self.error = error
         self.status_code = status_code
 
-
 ## Auth Header
 
 '''
