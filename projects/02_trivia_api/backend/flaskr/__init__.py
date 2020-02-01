@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
 import json
+from requests.models import Response
 
 from models import setup_db, Question, Category
 
@@ -17,10 +18,19 @@ def create_app(test_config=None):
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
   '''
+  CORS(
+    app,
+    origins='*'
+  )
 
   '''
   @TODO: Use the after_request decorator to set Access-Control-Allow
   '''
+  # @app.after_request()
+  # def after_request(response):
+  #   response.headers.add('Access-Control-Allow-Headers', 'Content-Type', 'Authorization')
+  #   response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
+  #   return response
 
   '''
   @TODO: 
@@ -50,6 +60,35 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
+  @app.route('/questions', methods = ['GET'])
+  def get_questions():
+    result = {}
+    page_number_string = request.args.get('page')
+    page_number = int(page_number_string)
+    questions = Question.query.paginate(page=page_number, error_out=False, max_per_page=10)
+    questions_count = Question.query.count()
+    categories = Category.query.all()
+    # TODO Figure out how current_category is set on a given query
+    result.update({
+      "questions": questions,
+      "total_questions": questions_count,
+      "categories": categories,
+      "current_category": "blah"
+    })
+    print(result)
+    a = jsonify(result)
+    print(a)
+    return result
+
+# success: (result) => {
+#         this.setState({
+#           questions: result.questions,
+#           totalQuestions: result.total_questions,
+#           categories: result.categories,
+#           currentCategory: result.current_category })
+#         return;
+#       },
+
 
   '''
   @TODO: 
