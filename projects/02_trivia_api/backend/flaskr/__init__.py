@@ -3,6 +3,7 @@ from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
+import json
 
 from models import setup_db, Question, Category
 
@@ -29,14 +30,12 @@ def create_app(test_config=None):
   @app.route('/categories', methods = ['GET'])
   def get_all_categories():
     categories = Category.query.all()
-    data_object = {}
+    data_object = []
     for category in categories:
-      data_object.update(
-        {
-          category.id: category.type
-        }
+      data_object.append(
+        category.type
       )
-    data = jsonify(data_object)
+    data = json.dumps(data_object)
     return data
 
   '''
