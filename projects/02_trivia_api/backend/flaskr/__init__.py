@@ -80,30 +80,21 @@ def create_app(test_config=None):
           "difficulty": question.difficulty
         }
       )
-    questions_str = json.dumps(questions_object)
     questions_count = Question.query.count()
     categories = Category.query.all()
     categories_object = []
     for category in categories:
-      categories_object.append(
-        {
-          "name": category.type,
-          "id": category.id
-        }
-      )
-    categories_str = json.dumps(categories_object)
+      categories_object.append(category.type)
     first_question = Question.query.first()
     first_question_category = first_question.category
     result.update({
-      "questions": questions_str,
+      "questions": questions_object,
       "total_questions": questions_count,
-      "categories": categories_str,
+      "categories": categories_object,
       "current_category": first_question_category
     })
-    print(result, type(result))
-    response_str = json.dumps(result)
-    print(response_str, type(response_str))
-    return response_str
+    response_json = jsonify(result)
+    return response_json
   
   '''
   @TODO: 
