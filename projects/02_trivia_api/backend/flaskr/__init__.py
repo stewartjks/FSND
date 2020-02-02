@@ -64,32 +64,47 @@ def create_app(test_config=None):
   def get_questions():
     result = {}
     page_number_string = request.args.get('page')
-    page_number = int(page_number_string)
+    if page_number_string:
+      page_number = int(page_number_string)
+    else:
+      page_number = 1
     questions = Question.query.paginate(page=page_number, error_out=False, max_per_page=10)
+    questions_object = []
+    for question in questions.items:
+      questions_object.append(
+        {
+          "key": question.id,
+          "question": question.question,
+          "answer": question.answer,
+          "category": question.category,
+          "difficulty": question.difficulty
+        }
+      )
+    questions_str = json.dumps(questions_object)
     questions_count = Question.query.count()
     categories = Category.query.all()
-    # TODO Figure out how current_category is set on a given query
+    categories_object = []
+    for category in categories:
+      categories_object.append(
+        {
+          "name": category.type,
+          "id": category.id
+        }
+      )
+    categories_str = json.dumps(categories_object)
+    first_question = Question.query.first()
+    first_question_category = first_question.category
     result.update({
-      "questions": questions,
+      "questions": questions_str,
       "total_questions": questions_count,
-      "categories": categories,
-      "current_category": "blah"
+      "categories": categories_str,
+      "current_category": first_question_category
     })
-    print(result)
-    a = jsonify(result)
-    print(a)
-    return result
-
-# success: (result) => {
-#         this.setState({
-#           questions: result.questions,
-#           totalQuestions: result.total_questions,
-#           categories: result.categories,
-#           currentCategory: result.current_category })
-#         return;
-#       },
-
-
+    print(result, type(result))
+    response_str = json.dumps(result)
+    print(response_str, type(response_str))
+    return response_str
+  
   '''
   @TODO: 
   Create an endpoint to DELETE question using a question ID. 
