@@ -87,7 +87,8 @@ def create_app(test_config=None):
       )
     questions_count = Question.query.count()
     categories = Category.query.all()
-    categories_object = []
+    # Add placeholder at zero-index since categories are not (but should be) zero-indexed in database
+    categories_object = ['']
     for category in categories:
       categories_object.append(category.type)
     first_question = Question.query.first()
@@ -144,7 +145,7 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
-  @app.route('/question', methods = ['POST'])
+  @app.route('/questions/create', methods = ['POST'])
   def create_question():
     error = False
     response = {}
@@ -162,7 +163,7 @@ def create_app(test_config=None):
       print(sys.exc_info())
     finally:
       db.session.close()
-      result.update(
+      response.update(
         {
           "success": True
         }
@@ -170,7 +171,7 @@ def create_app(test_config=None):
     if error:
       abort(400)
     else:
-      response_json = jsonify(result)
+      response_json = jsonify(response)
       return response_json
 
   '''
@@ -198,7 +199,6 @@ def create_app(test_config=None):
           "matches": match_list 
         }
       )
-      print(response)
     except:
       error = True
       print(sys.exc_info())
@@ -240,7 +240,6 @@ def create_app(test_config=None):
         "total_questions": total_questions,
         "current_category": current_category
       })
-      print(result)
     except:
       error = True
       abort(400)
