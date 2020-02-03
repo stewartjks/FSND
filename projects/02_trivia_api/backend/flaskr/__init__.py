@@ -41,13 +41,19 @@ def create_app(test_config=None):
   @app.route('/categories', methods = ['GET'])
   def get_all_categories():
     categories = Category.query.all()
-    data_object = []
+    categories_list = []
+    result = {}
     for category in categories:
-      data_object.append(
-        category.type
-      )
-    data = json.dumps(data_object)
-    return data
+      categories_list.append(category.type)
+    result.update(
+      {
+        "categories": categories_list
+      }
+    )
+    print(result)
+    result_json = jsonify(result)
+    print(result_json)
+    return result_json
 
   '''
   @TODO: 
@@ -126,7 +132,6 @@ def create_app(test_config=None):
       )
     if error:
       abort(400)
-      flash('Sorry, this request could not be completed.')
     else:
       response_json = jsonify(result)
       return response_json
@@ -141,6 +146,34 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
+  @app.route('/question', methods = ['POST'])
+  def create_question():
+    error = False
+    response = {}
+    try:
+      new_q_content = request.get_json()['question']
+      new_answer = request.get_json()['answer']
+      new_difficulty = request.get_json()['difficulty']
+      new_category = request.get_json()['category']
+      new_question = Question(question=new_q_content, answer=new_answer, difficulty=new_difficulty, category=new_category)
+      db.session.add(new_question)
+      db.session.commit()
+    except:
+      error = True
+      db.session.rollback()
+      print(sys.exc_info())
+    finally:
+      db.session.close()
+      result.update(
+        {
+          "success": True
+        }
+      )
+    if error:
+      abort(400)
+    else:
+      response_json = jsonify(result)
+      return response_json
 
   '''
   @TODO: 
