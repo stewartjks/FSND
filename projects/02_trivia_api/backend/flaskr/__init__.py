@@ -50,9 +50,7 @@ def create_app(test_config=None):
         "categories": categories_list
       }
     )
-    print(result)
     result_json = jsonify(result)
-    print(result_json)
     return result_json
 
   '''
@@ -214,8 +212,6 @@ def create_app(test_config=None):
   @TODO: 
   Create a GET endpoint to get questions based on category. 
 
-  @TODO: Fix issue with template not picking up attributes
-
   TEST: In the "List" tab / main screen, clicking on one of the 
   categories in the left column will cause only questions of that 
   category to be shown. 
@@ -225,14 +221,20 @@ def create_app(test_config=None):
     error = False
     result = {}
     try:
-      category_questions = Question.query.filter_by(id = category_id)
+      category_questions = Question.query.filter_by(category = category_id)
       questions_list = []
       for question_object in category_questions:
         questions_list.append(
-          question_object.question
+          {
+            "id": question_object.id,
+            "question": question_object.question,
+            "answer": question_object.answer,
+            "category": question_object.category,
+            "difficulty": question_object.difficulty
+          }
         )
       total_questions = Question.query.filter_by(id = category_id).count()
-      current_category = category_questions[0].category
+      current_category = category_id
       result.update({
         "questions": questions_list,
         "total_questions": total_questions,

@@ -67,7 +67,6 @@ class QuestionView extends Component {
           questions: result.questions,
           totalQuestions: result.total_questions,
           currentCategory: result.current_category })
-          console.log(this)
         return;
       },
       error: (error) => {
