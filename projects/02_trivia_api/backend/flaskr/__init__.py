@@ -5,8 +5,9 @@ from flask_cors import CORS
 import random
 import json
 from requests.models import Response
+import sys
 
-from models import setup_db, Question, Category
+from models import db, setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
@@ -73,7 +74,7 @@ def create_app(test_config=None):
     for question in questions.items:
       questions_object.append(
         {
-          "key": question.id,
+          "id": question.id,
           "question": question.question,
           "answer": question.answer,
           "category": question.category,
@@ -98,11 +99,37 @@ def create_app(test_config=None):
   
   '''
   @TODO: 
-  Create an endpoint to DELETE question using a question ID. 
+  Create an endpoint to DELETE a question using a question ID. 
 
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
+  @app.route('/questions/<int:id>', methods = ['DELETE'])
+  def delete_question(id):
+    result = {}
+    error = False
+    try:
+      question = Question.query.get(id)
+      question_id = question.id
+      db.session.delete(question)
+      db.session.commit()
+    except:
+      error = True
+      db.session.rollback()
+      print(sys.exc_info())
+    finally:
+      db.session.close()
+      result.update(
+        {
+         "deleted_question": question_id
+        }
+      )
+    if error:
+      abort(400)
+      flash('Sorry, this request could not be completed.')
+    else:
+      response_json = jsonify(result)
+      return response_json
 
   '''
   @TODO: 
