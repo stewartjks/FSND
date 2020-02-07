@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from  sqlalchemy.sql.expression import func, select
 from flask_cors import CORS
 import random
 import json
@@ -251,14 +252,57 @@ def create_app(test_config=None):
   '''
   @TODO: 
   Create a POST endpoint to get questions to play the quiz. 
-  This endpoint should take category and previous question parameters 
-  and return a random questions within the given category, 
-  if provided, and that is not one of the previous questions. 
+  This endpoint should take a category and a previous question as parameters 
+  and return a random question that is is not one of the previous questions and is
+  within the given category, if one was provided.
 
   TEST: In the "Play" tab, after a user selects "All" or a category,
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route('/quizzes/<int:quiz_id>/play', methods = ['POST'])
+  def create_quiz(quiz_id):
+    error = False
+    response = {}
+    try:
+      category_selected = request.get_json()['quiz_category']
+      category_id = category_selected['id']
+      excluded_questions = request.get_json()['previous_questions']
+      quiz_category = Category.query.get(category_id)
+      excluded_question_ids = []
+      for question in excluded_questions:
+        excluded_question_ids.append(question['id'])
+      # Get question list and randomize as informed by Stack Overflow question 60805, "Getting Random Row Through Sqlalchemy"
+      all_questions = Question.query.order_by(func.random()).all()
+      selected_question = []
+      for question in all_questions:
+        while len(selected_question) == 0:
+          question_id = question.id
+          if question_id in excluded_question_ids:
+            pass
+          elif question_id not in excluded_question_ids:
+            selected_question.append({
+              "id": question_id,
+              "question": question.question,
+              "answer": question.answer,
+              "category": question.category,
+              "difficulty": question.difficulty
+            })
+          else:
+            pass
+      response.update(
+        {
+          "success": True,
+          "question": selected_question
+        }
+      )
+    except:
+      error = True
+      print(sys.exc_info())
+      abort(400)
+    finally:
+      response_object = jsonify(response)
+      return response_object
 
   '''
   @TODO: 
