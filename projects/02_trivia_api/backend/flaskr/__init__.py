@@ -154,7 +154,9 @@ def create_app(test_config=None):
       new_q_content = request.get_json()['question']
       new_answer = request.get_json()['answer']
       new_difficulty = request.get_json()['difficulty']
-      new_category = request.get_json()['category']
+      new_category_raw = (request.get_json()['category'])
+      # Increment category by one to account for non-zero indexing in starter code
+      new_category = (int(new_category_raw) + 1)
       new_question = Question(question=new_q_content, answer=new_answer, difficulty=new_difficulty, category=new_category)
       db.session.add(new_question)
       db.session.commit()
