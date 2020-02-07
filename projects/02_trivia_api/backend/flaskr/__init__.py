@@ -194,12 +194,20 @@ def create_app(test_config=None):
     try:
       search_term = request.get_json()['searchTerm']
       matches = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
-      match_list = []
+      matches_list = []
       for match in matches:
-        match_list.append(match.question)
+        matches_list.append(
+          {
+            "id": match.id,
+            "question": match.question,
+            "answer": match.answer,
+            "category": match.category,
+            "difficulty": match.difficulty
+          }
+        )
       response.update(
         {
-          "matches": match_list 
+          "questions": matches_list 
         }
       )
     except:
