@@ -35,7 +35,6 @@ def create_app(test_config=None):
   #   return response
 
   '''
-  @TODO: 
   Create an endpoint to handle GET requests 
   for all available categories.
   '''
@@ -55,7 +54,6 @@ def create_app(test_config=None):
     return result_json
 
   '''
-  @TODO: 
   Create an endpoint to handle GET requests for questions, 
   including pagination (every 10 questions). 
   This endpoint should return a list of questions, 
@@ -104,7 +102,6 @@ def create_app(test_config=None):
     return response_json
   
   '''
-  @TODO: 
   Create an endpoint to DELETE a question using a question ID. 
 
   TEST: When you click the trash icon next to a question, the question will be removed.
@@ -137,7 +134,6 @@ def create_app(test_config=None):
       return response_json
 
   '''
-  @TODO: 
   Create an endpoint to POST a new question, 
   which will require the question and answer text, 
   category, and difficulty score.
@@ -178,7 +174,6 @@ def create_app(test_config=None):
       return response_json
 
   '''
-  @TODO: 
   Create a POST endpoint to get questions based on a search term. 
   It should return any questions for whom the search term 
   is a substring of the question. 
@@ -220,7 +215,6 @@ def create_app(test_config=None):
       return response_json
 
   '''
-  @TODO: 
   Create a GET endpoint to get questions based on category. 
 
   TEST: In the "List" tab / main screen, clicking on one of the 
@@ -260,7 +254,6 @@ def create_app(test_config=None):
 
 
   '''
-  @TODO: 
   Create a POST endpoint to get questions to play the quiz. 
   This endpoint should take a category and a previous question as parameters 
   and return a random question that is is not one of the previous questions and is
