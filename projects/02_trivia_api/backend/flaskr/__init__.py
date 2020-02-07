@@ -310,7 +310,6 @@ def create_app(test_config=None):
       return response_object
 
   '''
-  @TODO: 
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
@@ -319,7 +318,7 @@ def create_app(test_config=None):
     return jsonify(
       {
         "errorCode": 400,
-        "message": "Sorry, something went wrong."
+        "message": "Sorry, something went wrong.",
         "errorDetails": e
       }
     )
