@@ -274,28 +274,30 @@ def create_app(test_config=None):
         excluded_question_ids.append(question['id'])
       # Get question list and randomize as informed by Stack Overflow question 60805, "Getting Random Row Through Sqlalchemy"
       all_questions = Question.query.order_by(func.random()).all()
-      selected_question = []
+      new_question_selected = False
+      question_dict = {}
       for question in all_questions:
-        while len(selected_question) == 0:
-          question_id = question.id
-          if question_id in excluded_question_ids:
+        while new_question_selected == False:
+          if question.id in excluded_question_ids:
             pass
-          elif question_id not in excluded_question_ids:
-            selected_question.append({
-              "id": question_id,
-              "question": question.question,
-              "answer": question.answer,
-              "category": question.category,
-              "difficulty": question.difficulty
-            })
+          elif question.id not in excluded_question_ids:
+            question_dict.update(
+              {
+                "id": question.id,
+                "question": question.question,
+                "answer": question.answer,
+                "category": question.category,
+                "difficulty": question.difficulty
+              }
+            )
+            response.update(
+              {
+                "question": question_dict
+              }
+            )
+            new_question_selected = True
           else:
             pass
-      response.update(
-        {
-          "success": True,
-          "question": selected_question
-        }
-      )
     except:
       error = True
       print(sys.exc_info())

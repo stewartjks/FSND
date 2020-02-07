@@ -61,6 +61,8 @@ class QuizView extends Component {
       },
       crossDomain: true,
       success: (result) => {
+        console.log(result);
+        console.log(result.question);
         this.setState({
           showAnswer: false,
           previousQuestions: previousQuestions,
