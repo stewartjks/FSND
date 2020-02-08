@@ -26,6 +26,9 @@ class QuestionView extends Component {
       url: `/questions?page=${this.state.page}`,
       type: "GET",
       success: (result) => {
+        // Non-project requirement TODO: adjust index to suit preexisting front-end design
+          // const rawCategories = Array.from(result.categories);
+          // const indexedCategories = indexedCategories.shift();
         this.setState({
           questions: result.questions,
           totalQuestions: result.total_questions,
