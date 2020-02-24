@@ -14,6 +14,7 @@ import json
 # from flask_cors import CORS
 import sys
 
+# TODO Replace PATH modifications in application code with modifications on local machine
 # Ensure all Python libraries can be located wherever they're installed
 sys.path.append('/Users/Jac/Documents/udacity/FSND/projects/01_fyyur/env/bin')
 sys.path.append('/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages')
