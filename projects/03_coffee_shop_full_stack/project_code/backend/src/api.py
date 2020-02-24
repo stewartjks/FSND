@@ -15,6 +15,7 @@ import json
 import sys
 
 # Ensure all Python libraries can be located wherever they're installed
+sys.path.append('/Users/Jac/Documents/udacity/FSND/projects/01_fyyur/env/bin')
 sys.path.append('/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages')
 sys.path.append('/Users/Jac/Library/Python/3.8/lib/python/site-packages')
 
