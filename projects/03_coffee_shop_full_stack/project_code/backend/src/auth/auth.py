@@ -72,7 +72,7 @@ def get_token_auth_header():
 @TODO implement check_permissions(permission, payload) method
     @INPUTS
         permission: string permission (i.e. 'post:drink')
-        payload: decoded jwt payload
+        payload: decoded JWT payload
     it should raise an AuthError if permissions are not included in the payload
         !!NOTE check your RBAC settings in Auth0
     it should raise an AuthError if the requested permission string is not in the payload permissions array
@@ -80,13 +80,13 @@ def get_token_auth_header():
 '''
 def check_permissions(permission, payload):
     # TODO Add all possible permissions values to `all_permissions`
-    all_permissions = []
-    payload_permissions = 0
-    for permission in all_permissions:
-        if permission in payload:
-            payload_permissions += 1
-        else:
-            pass
+    # all_permissions = []
+    # payload_permissions = 0
+    # for permission in all_permissions:
+    #     if permission in payload:
+    #         payload_permissions += 1
+    #     else:
+    #         pass
     if payload_permissions <= 0:
         AuthError('Permissions not provided', 401)
     elif permission not in payload:
@@ -106,6 +106,7 @@ def check_permissions(permission, payload):
     !!NOTE urlopen has a common certificate error described here: https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
 '''
 def verify_decode_jwt(token):
+    print(token)
     raise Exception('Not Implemented')
 
 '''
