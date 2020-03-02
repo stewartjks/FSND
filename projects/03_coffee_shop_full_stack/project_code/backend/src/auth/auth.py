@@ -32,7 +32,7 @@ def get_token_auth_header():
     print(request.headers)
     auth_value = request.headers.get('Authorization', None)
     if auth_value:
-        # Partially derived from https://stackoverflow.com/questions/50284841/how-to-extract-token-string-from-bearer-token/50286164
+        # Partially derived from Auth0 quick start docs (https://auth0.com/docs/quickstart/backend/python/01-authorization)
         auth_array = auth_value.split(" ")
         if auth_array[0].lower() != 'bearer':
             raise AuthError({
