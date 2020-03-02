@@ -66,6 +66,7 @@ def get_drinks():
 '''
 
 @app.route('/drinks-detail', methods = ['GET'])
+@requires_auth('get:drinksdetail')
 def get_drinks_details():
     # TODO Finish drinks query
     drinks = Drink.query.all()

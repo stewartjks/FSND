@@ -20,9 +20,8 @@ class AuthError(Exception):
         self.status_code = status_code
 
 ## Auth Header
-
 '''
-@TODO implement get_token_auth_header() method
+@Implement get_token_auth_header() method
     it should attempt to get the header from the request
         it should raise an AuthError if no header is present
     it should attempt to split bearer and the token
@@ -30,18 +29,42 @@ class AuthError(Exception):
     return the token part of the header
 '''
 def get_token_auth_header():
-    # TODO Confirm auth header's key name
     print(request.headers)
-    if request.headers['auth-token']:
-        auth_token = request.headers['auth-token']
-        print(auth_token)
+    auth_value = request.headers.get('Authorization', None)
+    if auth_value:
         # Partially derived from https://stackoverflow.com/questions/50284841/how-to-extract-token-string-from-bearer-token/50286164
-        token_array = auth_token.split(" ")
-        if jwt.decode(token_array[1]):
-            decoded_token = token_array[1]
-            return decoded_token
-        else:
-            raise AuthError('Authorization parse error', 401)
+        auth_array = auth_value.split(" ")
+        if auth_array[0].lower() != 'bearer':
+            raise AuthError({
+                    "code": "invalid_header",
+                    "description": "Authorization header missing 'Bearer' prefix"
+                },
+                401
+            )
+        elif len(auth_array) == 1:
+            raise AuthError({
+                "code": "invalid_header",
+                "description": "Missing authorization token"
+                },
+                401
+            )
+        elif len(auth_array) > 2:
+            raise AuthError({
+                "code": "invalid_header",
+                "description": "Authorization header elements exceed those in Bearer token format"
+                },
+                401
+            )
+        auth_token = auth_array[1]
+        if auth_token.lower() == 'bearer':
+            raise AuthError({
+                "code": "invalid_header",
+                "description": "Bearer token values not in correct order"
+                },
+                401
+            )
+            print(auth_token)
+            return auth_token
     else:
         raise AuthError('Authorization error', 401)
 
