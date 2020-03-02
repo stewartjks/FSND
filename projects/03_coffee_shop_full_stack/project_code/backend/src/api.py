@@ -37,13 +37,14 @@ db_drop_and_create_all()
 '''
     GET /drinks
         it should be a public endpoint
-        @TODO it should contain only the drink.short() data representation
+        it should contain only the drink.short() data representation
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks', methods=['GET'])
 def get_drinks():
     drinks = Drink.query.all()
+    print(drinks)
     drink_data = []
     for drink in drinks:
         drink_data.append(
@@ -57,9 +58,8 @@ def get_drinks():
     return data
 
 '''
-@TODO implement endpoint
     GET /drinks-detail
-        it should require the 'get:drinks-detail' permission
+      @TODO it should require the 'get:drinks-detail' permission
         it should contain the drink.long() data representation
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
@@ -67,10 +67,16 @@ def get_drinks():
 
 @app.route('/drinks-detail', methods = ['GET'])
 def get_drinks_details():
-    drinks = "Macchiato: espresso with cream and foam, Pour Over: coffee made one cup at a time, Espresso: uniformly ground condensed coffee"
+    # TODO Finish drinks query
+    drinks = Drink.query.all()
+    drink_data = []
+    for drink in drinks:
+        drink_data.append(
+            drink.long()
+        )
     data_object = {
         "success": True,
-        "drinks": drinks
+        "drinks": drink_data
     }
     data = jsonify(data_object)
     return data
