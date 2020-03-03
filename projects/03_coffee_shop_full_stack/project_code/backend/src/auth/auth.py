@@ -7,7 +7,7 @@ from urllib.request import urlopen
 
 AUTH0_DOMAIN = 'dev-ju3r18pc.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE = 'dev'
+API_AUDIENCE = 'https://jackstewart.net/authentication'
 
 ## AuthError Exception
 '''
@@ -87,6 +87,7 @@ def check_permissions(permission, payload):
     #         payload_permissions += 1
     #     else:
     #         pass
+    print(permission, payload)
     if payload_permissions <= 0:
         AuthError('Permissions not provided', 401)
     elif permission not in payload:
@@ -113,7 +114,6 @@ def verify_decode_jwt(token):
 @TODO implement @requires_auth(permission) decorator method
     @INPUTS
         permission: string permission (i.e. 'post:drink')
-
     it should use the get_token_auth_header method to get the token
     it should use the verify_decode_jwt method to decode the jwt
     it should use the check_permissions method validate claims and check the requested permission
@@ -127,6 +127,5 @@ def requires_auth(permission=''):
             payload = verify_decode_jwt(token)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
-
         return wrapper
     return requires_auth_decorator
