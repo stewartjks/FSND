@@ -107,8 +107,64 @@ def check_permissions(permission, payload):
     !!NOTE urlopen has a common certificate error described here: https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
 '''
 def verify_decode_jwt(token):
-    print(token)
-    raise Exception('Not Implemented')
+    # References Python Quick Start: https://auth0.com/docs/quickstart/backend/python/01-authorization
+    jsonurl = urlopen("https://"+AUTH0_DOMAIN+"/.well-known/jwks.json")
+    # Store the web key set as a Python object
+    jwks = json.loads(jsonurl.read())
+    try:
+        unverified_header = jwt.get_unverified_header(token)
+        print(unverified_header)
+    except jwt.JWTError:
+        raise AuthError({
+            "code": "invalid_header",
+            "description": "Use a valid RS256 signed JWT"
+            },
+            401
+        )
+    rsa_key = {}
+    for key in jwks['keys']:
+        if key['kid'] == unverified_header['kid']:
+            rsa_key = {
+                'kty': key['kty'],
+                'kid': key['kid'],
+                'use': key['use'],
+                'n': key['n'],
+                'e': key['e']
+            }
+    if rsa_key:
+        try:
+            payload = jwt.decode(
+                token,
+                rsa_key,
+                algorithms = ALGORITHMS,
+                audience = API_AUDIENCE,
+                issuer = "https://"+AUTH0_DOMAIN+"/"
+            )
+        except jwt.ExpiredSignatureError:
+            raise AuthError({
+                "code": "token_expired",
+                "description": "Expired token"
+                },
+                401
+            )
+        except jwt.JWTClaimsError:
+            raise AuthError({
+                "code": "invalid_claims",
+                "description": "Incorrect values for audience and/or issuer."
+                },
+                401
+            )
+        except Exception:
+            raise AuthError({
+                "code": "invalid_header",
+                "description": "Unable to parse authentication token."
+                },
+                401
+            )
+        _request_ctx_stack.top.current_user = payload
+        return f(*args, **kwargs)
+    print(payload)
+    return payload
 
 '''
 @TODO implement @requires_auth(permission) decorator method
